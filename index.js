@@ -9,6 +9,7 @@ const erscTree = {
 }
 
 getFiles(erscTree.baseDir, '');
+fileUtils.noExitAndCreate(`./output/${erscTree.name}`);
 erscTree.files.forEach(file => getSingleFile(file));
 saveJson();
 
@@ -50,30 +51,11 @@ function getSingleFile(file) {
     fs.writeFileSync(`./output/${erscTree.name}/${file.name}.json`, JSON.stringify(code));
     console.log(file);
     traverse(code, file);
-
-    // let arr = str.split('\n');
-    // arr.forEach(line => {
-    //     if (line.trim().startsWith('function') || line.trim().startsWith('async function')) {
-    //         file.funcs.push({
-    //             name: /function ([^ (]*)/.exec(line)[1],
-    //             type: 'fnuction'
-    //         })
-    //     } else if (line.trim().startsWith('export function') || line.trim().startsWith('export async function')) {
-    //         file.exps.push({
-    //             name: /function ([^ (]*)/.exec(line)[1],
-    //             type: 'fnuction'
-    //         })
-    //     } else if (line.trim().startsWith('export class')) {
-    //         file.exps.push({
-    //             name: /class ([^ (]*)/.exec(line)[1],
-    //             type: 'class'
-    //         })
-    //     }
-    // });
 }
 
 function saveJson() {
     fileUtils.noExitAndCreate(`./output/${erscTree.name}`);
+    fs.writeFileSync(`./output/${erscTree.name}/erscTree.json`, JSON.stringify(erscTree));
     // fs.writeFileSync(`./output/${erscTree.name}/fileOverView.json`, JSON.stringify(erscTree));
 }
 
@@ -102,13 +84,112 @@ function traverse(node, file) {
     switch(node.type) {
         case 'ExportNamedDeclaration':
             console.log(file);
-            file.exps.push({
-                name: node.declaration.id.name,
-                type: 'fnuction'
-            });
+            dealExportNamedDeclaration(node, file.exps);
+            break;
+        case 'ExportDefaultDeclaration':
+            // 默认导出
+            dealExportDefaultDeclaration(node, file.exps);
+            break;
+        case 'ImportDeclaration':
+            // 默认导出
+            dealImportDeclaration(node, file.relys);
+            break;
+        case 'FunctionDeclaration':
+            // 默认导出
+            dealFunctionDeclaration(node, file.funcs);
             break;
     }
   }
 }
 
-console.log(functions);
+function dealExportNamedDeclaration(node, arr) {
+    if (node.declaration) {
+        switch(node.declaration.type) {
+            case 'VariableDeclaration': // 变量声明语句 ，要往下找
+                // 因为是导出，所以不考虑多个的情况
+                let obj = {
+                    nodeType: node.declaration.type,
+                    name: node.declaration.declarations[0].id.name,
+                    type: node.declaration.declarations[0].init.type
+                };
+                if (node.declaration.declarations[0].init.type === 'CallExpression') {
+                    obj['callee'] = {
+                        type: node.declaration.declarations[0].init.callee.type,
+                        name: node.declaration.declarations[0].init.callee.name
+                    };
+                }
+                arr.push(obj);
+                break;
+            case 'FunctionDeclaration':
+                let FunctionDeclaration = {
+                    nodeType: node.declaration.type,
+                    name: node.declaration.id.name,
+                    type: node.declaration.id.type
+                };
+                arr.push(FunctionDeclaration);
+                break;
+            case 'ClassDeclaration':
+                let ClassDeclaration = {
+                    nodeType: node.declaration.type,
+                    name: node.declaration.id.name,
+                    type: node.declaration.id.type
+                };
+                arr.push(ClassDeclaration);
+                break;
+
+        }
+    } else if (node.specifiers) {
+        node.specifiers.forEach(specifier => {
+            arr.push({
+                type: specifier.type,
+                key: specifier.local.name,
+                value: specifier.exported.name
+            });
+        });
+    }
+}
+
+function dealExportDefaultDeclaration(node, arr) {
+    switch(node.declaration.type) {
+        case "ObjectExpression":
+            node.declaration.properties.forEach(item => {
+                arr.push({
+                    nodeType: node.declaration.type,
+                    type: item.value.type,
+                    key: item.key.name,
+                    value: item.value.value || item.value.name
+                })
+            });
+            console.log(node, arr);
+            break;
+        case 'ClassDeclaration':
+            arr.push({
+                nodeType: node.declaration.type,
+                name: node.declaration.id.name,
+                type: node.declaration.id.type
+            });
+            break;
+    }
+}
+
+function dealImportDeclaration(node, arr) {
+    if (node.specifiers) {
+        node.specifiers.forEach(specifier => {
+            arr.push({
+                nodeType: 'ImportDeclaration',
+                type: specifier.type,
+                local: specifier.local.name,
+                imported: specifier.imported ? specifier.imported.name : '',
+                source: node.source.value
+            });
+        });
+    }
+}
+
+function dealFunctionDeclaration(node, arr) {
+    arr.push({
+        nodeType: 'FunctionDeclaration',
+        type: node.type,
+        name: node.id.name,
+    });
+}
