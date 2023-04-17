@@ -8,7 +8,7 @@ onMounted(() => {
 	if (editorRef.value && !editorInstance.value) {
 		editorInstance.value = monaco.editor.create(editorRef.value, {
 			value: ['function x() {', '\tconsole.log("Hello world!");', '}'].join('\n'),
-			language: 'typescript',
+			language: 'javascript',
       theme: 'vs', //官方自带三种主题vs, hc-black, or vs-dark
       selectOnLineNumbers: true,//显示行号
       roundedSelection: false,
@@ -24,14 +24,49 @@ onMounted(() => {
 	}
 });
 onUnmounted(() => toRaw(editorInstance.value)?.dispose());
+const tempList = ref([]);
+tempList.value = [{
+  name: 'util.js',
+  path: './'
+}]
+
 </script>
 
 <template>
-  <div class="editor" ref="editorRef" />
+  <div class="common-layout">
+    <el-container>
+      <el-aside class="slider" width="200px">
+        <div v-for="(item, index) in tempList" :key="index" class="file">
+          {{ item.name }}
+        </div>
+      </el-aside>
+      <el-main class="main">
+        <div class="editor" ref="editorRef" />
+      </el-main>
+    </el-container>
+  </div>
 </template>
 <style>
-  #codeEditBox {
-    width:100%;
-    height:200px;
+  .editor {
+    width: 100vw;
+    height: 100vh;
+  }
+  .slider {
+    background-color: white;
+    border-right: 1px #f0f0f0 solid;
+  }
+
+  .file {
+    color: black;
+    background-color: white;
+    padding: 5px 10px;
+  }
+
+  .file:hover {
+    background-color: #ecf5ff;
+  }
+
+  .main {
+    padding: 0px;
   }
 </style>

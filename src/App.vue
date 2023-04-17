@@ -7,7 +7,7 @@ import { RouterView } from 'vue-router';
     <el-header class="header">
       测试编辑器
     </el-header>
-    <el-main><RouterView /></el-main>
+    <el-main class="main"><RouterView /></el-main>
   </el-container>
 </template>
 
@@ -17,5 +17,8 @@ import { RouterView } from 'vue-router';
     align-items: center;
     background-color: #1067EE;
     color: white;
+  }
+  .main {
+    padding: 0px;
   }
 </style>
