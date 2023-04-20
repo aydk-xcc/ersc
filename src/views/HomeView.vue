@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import * as monaco from'monaco-editor';
 import { onBeforeUnmount, onMounted, onUnmounted, ref, toRaw } from 'vue'
+import {BASE_HOST} from '../api/serviceConfig.js';
 
 const editorRef = ref<HTMLElement | null>(null);
 const editorInstance = ref<monaco.editor.IStandaloneCodeEditor | null>(null);
-onMounted(() => {
+const tempList = ref([]);
+onMounted(async () => {
 	if (editorRef.value && !editorInstance.value) {
 		editorInstance.value = monaco.editor.create(editorRef.value, {
 			value: ['function x() {', '\tconsole.log("Hello world!");', '}'].join('\n'),
@@ -22,13 +24,11 @@ onMounted(() => {
       quickSuggestionsDelay: 100, //代码提示延时
 		});
 	}
+  fetch(BASE_HOST + '/files').then(async res => {
+    tempList.value  = await res.json();
+  })
 });
 onUnmounted(() => toRaw(editorInstance.value)?.dispose());
-const tempList = ref([]);
-tempList.value = [{
-  name: 'util.js',
-  path: './'
-}]
 
 </script>
 
@@ -37,7 +37,7 @@ tempList.value = [{
     <el-container>
       <el-aside class="slider" width="200px">
         <div v-for="(item, index) in tempList" :key="index" class="file">
-          {{ item.name }}
+          {{ item }}
         </div>
       </el-aside>
       <el-main class="main">

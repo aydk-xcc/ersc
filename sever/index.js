@@ -1,6 +1,6 @@
 let fs = require('fs');
 const acorn = require('acorn');
-let fileUtils = require('./utils/fileUtils');
+let fileUtils = require('../utils/fileUtils');
 const erscTree = {
     name: 'vuex',
     baseDir: './example/vuex/',
