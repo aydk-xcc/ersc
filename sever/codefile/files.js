@@ -1,10 +1,20 @@
 const fs = require('fs');
 const path = require('path')
-const baseDir = './example/vuex/'
+const baseDir = 'example/vuex/'
 exports.getFiles = () => {
     let arr = [];
     fn(baseDir, arr);
-    return arr;
+    return {
+        basedir: baseDir,
+        entry: 'index.js',
+        arr
+    };
+}
+
+exports.getSingleFile = (filename, path) => {
+    console.log(baseDir + path + filename);
+    let str = fs.readFileSync(baseDir + path + filename, 'utf-8');
+    return str;
 }
 
 function fn(item, arr) {
@@ -19,7 +29,7 @@ function fn(item, arr) {
         }else{
             arr.push({
                 name: q[i],
-                path: item1
+                path: item.replace(baseDir, '')
             });
         }
     }
