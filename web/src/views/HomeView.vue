@@ -27,11 +27,23 @@ onMounted(async () => {
     // monaco.editor.setTheme("myTheme");
 		editor = monaco.editor.create(editorRef.value, {
 			value: 'My to-do list:\n* buy milk\n* buy coffee\n* write awesome code',
-			language: "text/plain",
-      theme: 'github-dark',
+			language: "javascript",
 	    fontFamily: "Arial",
 	    fontSize: 16,
+      readOnly: true,
+      tabSize: 4,
+      insertSpaces: true,
+      wordWrap: 'on',
+      wordWrapColumn: 120
 		});
+
+    let mode = editor.getModel();
+    let select = editor.getSelection();
+  
+    editor.onDidChangeCursorSelection((e) => {
+      let select = editor.getSelection();
+      console.log(mode.getValueInRange(select));
+    });
 
 	}
   fetch(BASE_HOST + '/files').then(async res => {
