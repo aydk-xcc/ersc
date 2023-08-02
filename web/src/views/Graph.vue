@@ -6,6 +6,7 @@ import { DagreLayout } from '@antv/layout';
 import {BASE_HOST} from '../api/serviceConfig';
 import request from '../api/request';
 import path from '../utils/path';
+import {filterSameFile} from '../utils/file';
 // import { register, getTeleport } from '@antv/x6-vue-shape'
 
 // console.log(graph);
@@ -27,53 +28,54 @@ function dealModuleRelative(obj) {
     obj.arr.forEach(file => {
         fileList.push((obj.basedir + file.path + file.name).replace(/\/\//g, '/'));
     }); // 遍历文件
+    fileList = filterSameFile(fileList);
     obj.arr.forEach((file, index) => {
-        data.nodes.push({
-            id: (obj.basedir + file.path + file.name).replace(/\/\//g, '/'),
-            shape: 'rect',
-            x: 40*index,
-            y: 40*index,
-            width: 150,
-            height: 40,
-            label: file.name,
-            attrs: {
-                // body 是选择器名称，选中的是 rect 元素
-                body: {
-                    stroke: '#8f8f8f',
-                    strokeWidth: 1,
-                    fill: '#fff',
-                    rx: 6,
-                    ry: 6,
-                },
-            },
-            data: {
-                // nodeMovable: false
-            }
-        });
         let current = (obj.basedir + file.path + file.name).replace(/\/\//g, '/')
-        console.log(current);
-        file.str.body.forEach(node => {
-            if (node.type === "ImportDeclaration" && node.source.value.includes('/')) {
-                console.log(node.source.value, path.resolve(current, node.source.value));
-                data.edges.push({
-                    shape: 'edge',
-                    source: path.resolve(current, node.source.value) + '.js',
-                    target: current,
-                    label: '',
-                    attrs: {
-                        // line 是选择器名称，选中的边的 path 元素
-                        line: {
-                            stroke: '#8f8f8f',
-                            strokeWidth: 1,
-                        },
+        if (fileList.includes(current)) {
+            data.nodes.push({
+                id: current,
+                shape: 'rect',
+                width: 150,
+                height: 40,
+                label: file.name,
+                attrs: {
+                    // body 是选择器名称，选中的是 rect 元素
+                    body: {
+                        stroke: '#8f8f8f',
+                        strokeWidth: 1,
+                        fill: '#fff',
+                        rx: 6,
+                        ry: 6,
                     },
-                });
-            }
-        })
+                },
+                data: {
+                    // nodeMovable: false
+                }
+            });
+            file.str.body.forEach(node => {
+                if (node.type === "ImportDeclaration" && node.source.value.includes('/')) {
+                    console.log(node.source.value, path.resolve(current, node.source.value));
+                    let sourceId = path.resolve(current, node.source.value) + '.js';
+                    if (fileList.includes(sourceId)) {
+                        data.edges.push({
+                            shape: 'edge',
+                            source: path.resolve(current, node.source.value) + '.js',
+                            target: current,
+                            label: '',
+                            attrs: {
+                                // line 是选择器名称，选中的边的 path 元素
+                                line: {
+                                    stroke: '#8f8f8f',
+                                    strokeWidth: 1,
+                                },
+                            },
+                        });
+                    }
+                }
+            })
+        }
     });
-}
-
-function checkSourceFile(fileList) {
+    
 
 }
 
@@ -109,6 +111,25 @@ onMounted(async () => {
             controlPoints: true,
         });
         graph.fromJSON(dagreLayout.layout(data)) // 渲染元素
+        graph.on('node:mouseenter', args => {
+            // console.log(args.node.getConnectedEdges());
+            console.log(graph.getConnectedEdges(args.node));
+            let edges = graph.getConnectedEdges(args.node);
+            edges.forEach(edge => {
+                edge.attr('line/stroke', 'blue'); // 设置连接线颜色为红色
+            });
+        });
+        graph.on('node:mouseleave', args => {
+            // console.log(args.node.getConnectedEdges());
+            console.log(graph.getConnectedEdges(args.node));
+            let edges = graph.getConnectedEdges(args.node);
+            edges.forEach(edge => {
+                edge.attr('line/stroke', '#8f8f8f'); // 设置连接线颜色为红色
+            });
+        });
+        graph.on('edge:mouseenter', args => {
+            console.log(args);
+        });
         // graph.centerContent() // 居中显示
     })
 
