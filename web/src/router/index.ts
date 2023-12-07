@@ -7,9 +7,17 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'home',
+      redirect: '/graph'
+    },
+    {
+      path: '/graph',
+      name: 'graph',
       component: Graph
-      // component: HomeView
+    },
+    {
+      path: '/code',
+      name: 'code',
+      component: HomeView
     },
     {
       path: '/about',
