@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { defineComponent, onMounted, ref } from 'vue'
-import ProgressNode from './graph-view/ProgressNode.vue'
+import ProgressNode from '../graph-view/ProgressNode.vue'
 import { Graph } from '@antv/x6';
 import { DagreLayout } from '@antv/layout';
-import {BASE_HOST} from '../api/serviceConfig';
-import request from '../api/request';
-import path from '../utils/path';
-import {filterSameFile} from '../utils/file';
+import fileApi from '@/api/fileApi';
+import path from '@/utils/path';
+import {filterSameFile} from '@/utils/file';
 // import { register, getTeleport } from '@antv/x6-vue-shape'
 
 // console.log(graph);
@@ -98,8 +97,8 @@ onMounted(async () => {
             },
         }
     })
-    fetch(BASE_HOST + '/files').then(async res => {
-        files.value  = await res.json();
+    fileApi.getFiles().then(res => {
+        files.value  = res;
         dealModuleRelative(files.value);
         console.log(data);
         let dagreLayout = new DagreLayout({
@@ -160,3 +159,4 @@ onMounted(async () => {
 
     }
 </style>
+@/config/request

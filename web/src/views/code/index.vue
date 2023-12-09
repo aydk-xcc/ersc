@@ -1,0 +1,182 @@
+<script setup lang="ts">
+  import { onBeforeUnmount, onMounted, onUnmounted, reactive, ref, toRaw } from 'vue'
+  import { AxiosResponse } from 'axios';
+  import {ArrowRightBold} from '@element-plus/icons-vue';
+  import fileApi from '@/api/fileApi';
+  import editor from '@/components/editor/Index.vue';
+
+  interface Tree {
+    label: string
+    children: Tree[]
+  }
+
+  interface flesResponse {
+    arr:  Array<{
+      name: string,
+      path: string,
+      str?: string
+    }>;
+    basedir: string;
+    entry: string
+  }
+  const defaultProps = {
+    children: 'children',
+    label: 'label',
+  }
+  const files: Tree[] = reactive([]);
+  const editorViewRef = ref(editor);
+  onMounted(async () => {
+    fileApi.getFiles().then((res: AxiosResponse<flesResponse>) => {
+      console.log(res);
+      if (res.data) {
+        // 转换成文件结构
+        let arr: Tree[] = reactive([]);
+        res.data.arr.forEach(item => {
+          if (item.path === '/') {
+            arr.push({
+              label: item.name,
+              children: [],
+              ...item
+            })
+          } else {
+            let paths = item.path.split('/');
+            let tempArr = arr;
+            paths.forEach((path, ind) => {
+              if (!path) {
+                return;
+              }
+              let index = tempArr.findIndex(item => item.label === path);
+              if (index<0) {
+                tempArr.push({
+                  label: path,
+                  children: []
+                })
+                index = tempArr.length - 1;
+              }
+              if (ind === paths.length - 2) {
+                // 倒数第二级目录
+                tempArr[index].children.push({
+                  label: item.name,
+                  children: [],
+                  ...item
+                })
+              }
+              tempArr = tempArr[index].children;
+            });
+          }
+        });
+        arr.sort((a: Tree, b: Tree) => {
+          if (a.children.length && b.children.length) {
+            // 都是目录
+            return a.label < b.label ? -1: 0;
+          } else if (a.children.length || b.children.length) {
+              return a.children.length > b.children.length ? -1: 0;
+          } else {
+            return a.label < b.label ? -1: 0;
+          }
+        })
+        files.push(...arr);
+      }
+    })
+  });
+  // onUnmounted(() => toRaw(editor)?.dispose());
+
+
+  const handleNodeClick = (data: Tree) => {
+    if (!data.children.length) {
+      fileApi.getFile(data.label).then(res => {
+        editorViewRef.value.updateValue(res.data);
+      })
+    }
+  }
+
+  function clickFile(name: string) {
+    fileApi.getFile(name).then(res => {
+      editorViewRef.value.updateValue(res.data);
+    })
+  }
+</script>
+
+<template>
+  <div class="common-layout">
+    <el-container>
+      <el-aside class="slider" width="200px">
+        <el-tree
+          :data="files"
+          :icon="ArrowRightBold"
+          :props="defaultProps"
+          @node-click="handleNodeClick"
+        >
+          <template #default="{ node, data }">
+            <span class="custom-tree-node">
+              <span>{{ node.label }}</span>
+              <span
+                v-if="data.label === 'index.js'"
+                class="index-file-icon" 
+                type="primary"
+              >入</span>
+            </span>
+          </template>
+        </el-tree>
+      </el-aside>
+      <el-main class="main">
+        <div class="editor-view">
+          <editor ref="editorViewRef"></editor>
+        </div>
+        <div class="right">
+            test
+
+        </div>
+      </el-main>
+    </el-container>
+  </div>
+</template>
+<style lang="scss" scoped>
+  .index-file-icon {
+    display: inline-block;
+    background-color: green;
+    color: white;
+    font-size: 12px;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    text-align: center;
+    margin-left: 32px;
+    border-radius: 4px;
+  }
+ .common-layout, .el-container {
+  height: 100%;
+ }
+  .slider {
+    background-color: white;
+    border-right: 1px #f0f0f0 solid;
+  }
+
+  .file {
+    color: black;
+    background-color: white;
+    padding: 5px 10px;
+  }
+
+  .file:hover {
+    background-color: #ecf5ff;
+  }
+
+  .main {
+    padding: 0px;
+    display: flex;
+    flex-direction: row;
+    height: calc(100% - 50px);
+    .editor-view {
+      display: flex;
+      flex: 1 0 auto;
+      overflow: hidden;
+      height: 100%;
+    }
+    .right {
+      width: 300px;
+      background-color: #00bbfa;
+    }
+  }
+</style>
+./components/editor/Index.vue@/config/request

@@ -47,7 +47,7 @@
   </el-container>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
   .aside-menu {
     height: 100%;
   }

@@ -3,15 +3,23 @@ const app = express()
 const port = 3000
 var files = require('./codefile/files');
 
-app.get('/files', (req, res) => {
+app.get('/api/v1/file/files', (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*')
-  res.send(files.getFiles())
+  res.send({
+    data: files.getFiles(),
+    code: '',
+    message: ''
+  })
 })
 
-app.get('/singlefile', (req, res) => {
+app.get('/api/v1/file/single_file', (req, res) => {
   console.log(req.query);
   res.setHeader('Access-Control-Allow-Origin', '*')
-  res.send(files.getSingleFile(req.query.name, ''))
+  res.send({
+    data: files.getSingleFile(req.query.name, ''),
+    code: '',
+    message: ''
+  })
 })
 
 app.listen(port, () => {

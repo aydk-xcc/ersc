@@ -1,9 +1,9 @@
 <script setup lang='ts'>
     import * as monaco from 'monaco-editor';
     import { onBeforeUnmount, onMounted, onUnmounted, ref, toRaw } from 'vue';
-    import '../../worker';
+    import './worker';
     import {clearDefaultContextMenu, addActions} from './option.js';
-    import {parseAst} from '../../utils/resolveAst';
+    import {parseAst} from '@/utils/resolveAst';
 
 
     const editorRef = ref<HTMLElement | null>(null);
@@ -86,4 +86,4 @@
         width: 100%;
         height: 100%;
     }
-</style>
+</style>../../../worker../../../utils/resolveAst
