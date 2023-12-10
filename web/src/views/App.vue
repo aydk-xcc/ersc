@@ -1,13 +1,17 @@
 <script setup lang="ts">
-  import { RouterView } from 'vue-router';
-  import { ref } from 'vue';
+  import { RouterView, useRoute } from 'vue-router';
+  import { ref, watchEffect, nextTick } from 'vue';
   import { Picture, Document, ArrowRightBold, ArrowLeftBold } from '@element-plus/icons-vue';
   const isCollapse = ref(false);
-
+  const currentPath = ref('/graph');
   function handleCollapse() {
-    console.log('open')
     isCollapse.value = !isCollapse.value;
   }
+  const route = useRoute();
+  watchEffect(() => {
+    // 当路由变化时更新当前路径
+    currentPath.value = route.path;
+  });
 </script>
 
 <template>
@@ -18,16 +22,16 @@
     <el-container>
       <el-aside style="width:auto;">
         <el-menu
-          default-active="graph"
+          :default-active="currentPath"
           :router="true"
           class="aside-menu"
           :collapse="isCollapse"
         >
-          <el-menu-item index="graph">
+          <el-menu-item index="/graph">
             <el-icon><Picture /></el-icon>
             <template #title>结构图</template>
           </el-menu-item>
-          <el-menu-item index="code">
+          <el-menu-item index="/code">
             <el-icon><document /></el-icon>
             <template #title>代码</template>
           </el-menu-item>

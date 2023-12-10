@@ -10,10 +10,11 @@ export const getFiles = () => {
 /**
  * 查询单个文件
  */
-export const getFile = (name: string) => {
+export const getFile = (name: string, path: string) => {
     return request.get(fileUrl.fileUrl, {
         params: {
-            name: name
+            name: name,
+            path
         }
     });
 }

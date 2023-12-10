@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { onBeforeUnmount, onMounted, onUnmounted, reactive, ref, toRaw } from 'vue'
-  import { AxiosResponse } from 'axios';
+  import type { AxiosResponse } from 'axios';
   import {ArrowRightBold} from '@element-plus/icons-vue';
   import fileApi from '@/api/fileApi';
   import editor from '@/components/editor/Index.vue';
@@ -84,16 +84,10 @@
 
   const handleNodeClick = (data: Tree) => {
     if (!data.children.length) {
-      fileApi.getFile(data.label).then(res => {
+      fileApi.getFile(data.label, data.path).then(res => {
         editorViewRef.value.updateValue(res.data);
       })
     }
-  }
-
-  function clickFile(name: string) {
-    fileApi.getFile(name).then(res => {
-      editorViewRef.value.updateValue(res.data);
-    })
   }
 </script>
 
@@ -166,7 +160,7 @@
     padding: 0px;
     display: flex;
     flex-direction: row;
-    height: calc(100% - 50px);
+    height: 100%;
     .editor-view {
       display: flex;
       flex: 1 0 auto;

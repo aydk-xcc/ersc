@@ -98,7 +98,7 @@ onMounted(async () => {
         }
     })
     fileApi.getFiles().then(res => {
-        files.value  = res;
+        files.value  = res.data;
         dealModuleRelative(files.value);
         console.log(data);
         let dagreLayout = new DagreLayout({

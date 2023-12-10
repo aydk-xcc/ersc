@@ -6,13 +6,16 @@ import 'element-plus/dist/index.css'
 import App from '@/views/App.vue';
 import router from './router';
 import '@/components/editor/worker';
+import {setupAssets} from './plugins';
 
-import './assets/main.css'
+async function setupApp() {
+    setupAssets();
+    const app = createApp(App)
+    app.use(createPinia())
+    app.use(router)
+    app.use(ElementPlus)
 
-const app = createApp(App)
+    app.mount('#app')
+}
 
-app.use(createPinia())
-app.use(router)
-app.use(ElementPlus)
-
-app.mount('#app')
+setupApp();
