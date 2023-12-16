@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "target": "ES2020",
+    "sourceMap": true,
+    "outDir": "dist",
+    "baseUrl": ".",
+    "paths": {
+      "*": ["./node_modules/*", "*"]
+    },
+    "typeRoots": ["./src/typing", "./node_modules/@types"], 
+    "noImplicitAny": true                               /* Skip type checking all .d.ts files. */
+  },
+  "include": ["src/**/*.ts", "src/typing/*.d.ts"]
+}

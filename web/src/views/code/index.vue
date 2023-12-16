@@ -169,7 +169,7 @@
     }
     .right {
       width: 300px;
-      background-color: #00bbfa;
+      border-left: 1px solid #f0f0f0;
     }
   }
 </style>

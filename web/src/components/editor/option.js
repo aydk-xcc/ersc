@@ -42,4 +42,12 @@ export function addActions(editor) {
             console.log('My custom action was clicked!');
         }
     });
+    editor.addAction({
+        id: 'ersc_message',
+        label: '注解',
+        contextMenuGroupId: 'navigation',
+        run: function(ed) {
+            console.log('My custom action was clicked!');
+        }
+    });
 }

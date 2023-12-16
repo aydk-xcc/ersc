@@ -1,9 +1,10 @@
 const express = require('express')
+const dotenv = require('dotenv');
 const app = express()
-const port = 3000
-var files = require('./codefile/files');
+dotenv.config();
+var files = require('./codefile/files.ts');
 
-app.get('/api/v1/file/files', (req, res) => {
+app.get('/api/v1/file/files', (req: any, res: any) => {
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.send({
     data: files.getFiles(),
@@ -12,7 +13,7 @@ app.get('/api/v1/file/files', (req, res) => {
   })
 })
 
-app.get('/api/v1/file/single_file', (req, res) => {
+app.get('/api/v1/file/single_file', (req: any, res: any) => {
   console.log(req.query);
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.send({
@@ -22,6 +23,6 @@ app.get('/api/v1/file/single_file', (req, res) => {
   })
 })
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
+app.listen(process.env.PORT, () => {
+  console.log(`Example app listening on port ${process.env.PORT}`)
 })
