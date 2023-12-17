@@ -7,6 +7,6 @@ declare namespace FileData {
         isEntry?: boolean;
         isDir: boolean;
         precess?: number;
-        children?: Array<SingleFile>
+        children?: Array<SingleFile>;
     }
 }

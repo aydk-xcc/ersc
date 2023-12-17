@@ -2,18 +2,18 @@ const fs = require('fs');
 const path = require('path')
 const baseDir = 'example/vuex/'
 const acorn = require('acorn');
-declare namespace FileData {
-    interface SingleFile {
-        name: string;
-        path: string;
-        fullPath: string;
-        content?: string;
-        isEntry?: boolean;
-        isDir: boolean;
-        precess?: number;
-        children?: Array<SingleFile>
-    }
-}
+// declare namespace FileData {
+//     interface SingleFile {
+//         name: string;
+//         path: string;
+//         fullPath: string;
+//         content?: string;
+//         isEntry?: boolean;
+//         isDir: boolean;
+//         precess?: number;
+//         children?: Array<SingleFile>
+//     }
+// }
 
 
 exports.getModuleRealtive = () => {

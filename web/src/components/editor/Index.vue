@@ -64,10 +64,6 @@
 
             });
 
-            // for (let i = 0;i<10;i++) {
-            //     ssfa
-            // }
-
             editor.onDidChangeCursorPosition((e: monaco.editor.IEditorPositionChangeEvent) => {
                 console.log(model?.getOptions());
                 console.log(model?.getLineContent(e.position.lineNumber));
