@@ -2,18 +2,7 @@ const fs = require('fs');
 const path = require('path')
 const baseDir = 'example/vuex/'
 const acorn = require('acorn');
-// declare namespace FileData {
-//     interface SingleFile {
-//         name: string;
-//         path: string;
-//         fullPath: string;
-//         content?: string;
-//         isEntry?: boolean;
-//         isDir: boolean;
-//         precess?: number;
-//         children?: Array<SingleFile>
-//     }
-// }
+const fileUtils = require('../utils/fileUtils');
 
 
 exports.getModuleRealtive = () => {
@@ -23,6 +12,7 @@ exports.getModuleRealtive = () => {
 exports.getFiles = () => {
     let arr: Array<FileData.SingleFile> = [];
     fn(baseDir, arr);
+    fileUtils.filesSort(arr);
     return {
         basedir: baseDir,
         entry: 'index.js',
@@ -56,11 +46,11 @@ function fn(item: string, arr: Array<FileData.SingleFile>) {
         // console.log(dir);
         if(dir.isDirectory()){ // isDirectory() 检查是否为文件夹
             let obj: FileData.SingleFile = {
-                name: tempPath,
+                label: tempFiles[i],
                 isDir: true,
                 isEntry: false,
-                path: tempPath,
-                fullPath: '',
+                path: tempFiles[i],
+                fullPath: tempPath,
                 children: []
             };
             arr.push(obj);
@@ -68,11 +58,11 @@ function fn(item: string, arr: Array<FileData.SingleFile>) {
         }else{
             let str = fs.readFileSync(tempPath, 'utf-8');
             arr.push({
-                name: tempFiles[i],
+                label: tempFiles[i],
                 path: item.replace(baseDir, '') + '/',
                 isDir: false,
                 isEntry: false,
-                fullPath: '',
+                fullPath: tempPath,
                 content: acorn.parse(str, {
                     ecmaVersion: 2020,
                     sourceType: 'module'

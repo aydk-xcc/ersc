@@ -5,17 +5,18 @@
   import fileApi from '@/api/fileApi';
   import editor from '@/components/editor/Index.vue';
 
-  interface Tree {
-    label: string
-    children: Tree[]
+  interface File {
+      label: string,
+      children: Array<File>
+      path: string,
+      str?: string,
+      isDir: boolean,
+      fullPath: string,
+      isEntry: boolean
   }
 
   interface flesResponse {
-    arr:  Array<{
-      name: string,
-      path: string,
-      str?: string
-    }>;
+    arr:  Array<File>;
     basedir: string;
     entry: string
   }
@@ -23,67 +24,21 @@
     children: 'children',
     label: 'label',
   }
-  const files: Tree[] = reactive([]);
+  const files: File[] = reactive([]);
   const editorViewRef = ref(editor);
   onMounted(async () => {
     fileApi.getFiles().then((res: AxiosResponse<flesResponse>) => {
       console.log(res);
       if (res.data) {
-        // 转换成文件结构
-        let arr: Tree[] = reactive([]);
-        res.data.arr.forEach(item => {
-          if (item.path === '/') {
-            arr.push({
-              label: item.name,
-              children: [],
-              ...item
-            })
-          } else {
-            let paths = item.path.split('/');
-            let tempArr = arr;
-            paths.forEach((path, ind) => {
-              if (!path) {
-                return;
-              }
-              let index = tempArr.findIndex(item => item.label === path);
-              if (index<0) {
-                tempArr.push({
-                  label: path,
-                  children: []
-                })
-                index = tempArr.length - 1;
-              }
-              if (ind === paths.length - 2) {
-                // 倒数第二级目录
-                tempArr[index].children.push({
-                  label: item.name,
-                  children: [],
-                  ...item
-                })
-              }
-              tempArr = tempArr[index].children;
-            });
-          }
-        });
-        arr.sort((a: Tree, b: Tree) => {
-          if (a.children.length && b.children.length) {
-            // 都是目录
-            return a.label < b.label ? -1: 0;
-          } else if (a.children.length || b.children.length) {
-              return a.children.length > b.children.length ? -1: 0;
-          } else {
-            return a.label < b.label ? -1: 0;
-          }
-        })
-        files.push(...arr);
+        files.push(...res.data.arr);
       }
     })
   });
   // onUnmounted(() => toRaw(editor)?.dispose());
 
 
-  const handleNodeClick = (data: Tree) => {
-    if (!data.children.length) {
+  const handleNodeClick = (data: File) => {
+    if (!data.isDir) {
       fileApi.getFile(data.label, data.path).then(res => {
         editorViewRef.value.updateValue(res.data);
       })

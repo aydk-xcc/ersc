@@ -1,6 +1,6 @@
 declare namespace FileData {
     interface SingleFile {
-        name: string;
+        label: string;
         path: string;
         fullPath: string;
         content?: string;

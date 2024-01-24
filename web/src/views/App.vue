@@ -2,12 +2,15 @@
   import { RouterView, useRoute } from 'vue-router';
   import { ref, watchEffect, nextTick } from 'vue';
   import { Picture, Document, ArrowRightBold, ArrowLeftBold } from '@element-plus/icons-vue';
+  import Header from '@/components/header/Header.vue';
+
   const isCollapse = ref(false);
   const currentPath = ref('/graph');
   function handleCollapse() {
     isCollapse.value = !isCollapse.value;
   }
   const route = useRoute();
+
   watchEffect(() => {
     // 当路由变化时更新当前路径
     currentPath.value = route.path;
@@ -15,10 +18,8 @@
 </script>
 
 <template>
-  <el-container>
-    <el-header class="header">
-      测试编辑器
-    </el-header>
+  <el-container direction="vertical">
+    <Header/>
     <el-container>
       <el-aside style="width:auto;">
         <el-menu

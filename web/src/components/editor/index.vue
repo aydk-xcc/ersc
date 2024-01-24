@@ -92,6 +92,7 @@
                 run: () => {}
             })
 
+
             let p1 = new monaco.Position(1, 2);
             let p2 = new monaco.Position(0, 9);
             monaco.Position.compare(p1, p2);
@@ -111,6 +112,54 @@
         editor?.setValue(content);
         console.log(monaco.editor.tokenize(content, 'javascript'));
         console.log(parseAst(content));
+        monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true);
+        const model2 = monaco.editor.createModel(content, 'javascript');
+        const languageService = monaco.languages.typescript.getJavaScriptWorker().then(worker => {
+            worker(model2.uri).then(client => {
+                console.log(client, model2.uri.toString(), model2.getLineCount());
+                // client.getScriptText(model2.uri.toString()).then(res => {
+                //     console.log('getScriptText', res);
+                // })
+                const decorations = [];
+                client.getNavigationTree(model2.uri.toString()).then(res => {
+                    console.log('getNavigationTree', res);
+                    res.childItems.forEach(node => {
+                        if (['class', 'function'].includes(node.kind)) {
+                            let spans = node.spans[0];
+                            console.log('开始', model2.getPositionAt(spans.start));
+                            let start = model2.getPositionAt(spans.start);
+                            let end = model2.getPositionAt(spans.start + spans.length);
+                            console.log('结束', model2.getPositionAt(spans.start + spans.length));
+                            decorations.push({
+                                range: {
+                                    startLineNumber: start.lineNumber, // 函数所在的行号
+                                    startColumn: start.column,
+                                    endLineNumber: end.lineNumber,
+                                    endColumn: end.column
+                                },
+                                options: {
+                                    isWholeLine: true,
+
+                                    className: 'functionMarker', // 自定义类名
+                                    glyphMarginClassName: 'functionGlyph' // 自定义标志的类名
+                                }
+                            })
+                        }
+                    });
+                    console.log(editor?.createDecorationsCollection(decorations));
+                })
+                client.getSemanticDiagnostics(model2.uri.toString()).then(res => {
+                    console.log('getSemanticDiagnostics', res);
+                });
+                client.getSuggestionDiagnostics(model2.uri.toString()).then(res => {
+                    console.log('getSuggestionDiagnostics', res);
+                });
+
+                client.getSyntacticDiagnostics(model2.uri.toString()).then(res => {
+                    console.log('getSyntacticDiagnostics', res);
+                });
+            });
+        });
     }
 
     defineExpose({
@@ -125,5 +174,11 @@
     .editor {
         width: 100%;
         height: 100%;
+    }
+    /* 自定义函数标志的样式 */
+    :deep .functionMarker {
+        background-color: #f0f0f0; /* 设置背景颜色 */
+        color: black;
+    /* 可以添加其他自定义样式 */
     }
 </style>

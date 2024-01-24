@@ -19,7 +19,17 @@ export const getFile = (name: string, path: string) => {
     });
 }
 
+export const uploadFiles = (formdata:FormData) => {
+    console.log(formdata);
+    return request.post(fileUrl.fileUploadsUrl, formdata, {
+        headers: {
+            "Content-Type": 'multipart/form-data'
+        }
+    });
+}
+
 export default {
     getFiles,
-    getFile
+    getFile,
+    uploadFiles
 }
