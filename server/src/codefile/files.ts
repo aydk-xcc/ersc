@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path')
-const baseDir = 'example/vuex/'
+const baseDir = 'project/'
 const acorn = require('acorn');
 const fileUtils = require('../utils/fileUtils');
 
@@ -9,9 +9,9 @@ exports.getModuleRealtive = () => {
 
 }
 
-exports.getFiles = () => {
+exports.getFiles = (base_dir: string) => {
     let arr: Array<FileData.SingleFile> = [];
-    fn(baseDir, arr);
+    fn(`${baseDir}${base_dir}/`, arr);
     fileUtils.filesSort(arr);
     return {
         basedir: baseDir,
@@ -31,14 +31,12 @@ exports.getFilesData = () => {
 }
 
 exports.getSingleFile = (filename: string, path: string) => {
-    console.log(baseDir + path + filename);
     let str = fs.readFileSync(baseDir + path + filename, 'utf-8');
     return str;
 }
 
 function fn(item: string, arr: Array<FileData.SingleFile>) {
     let tempFiles = fs.readdirSync(item); //readdirSync 同步读取文件
-    console.log(tempFiles);
     // console.log(q);
     for (let i = 0; i < tempFiles.length; i++) {
         let tempPath = path.join(item, tempFiles[i])

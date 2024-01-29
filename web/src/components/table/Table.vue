@@ -73,7 +73,9 @@ import dayjs from 'dayjs';
             loading.value = true;
             props.api(pagination.pageNum, pagination.pageSize, params).then(res=> {
                 currentTableData.value = res.data;
-                pagination.total = res.pagination.records;
+                if (res.pagination) {
+                    pagination.total = res.pagination.records;
+                }
             }).finally(() => {
                 loading.value = false;
             })

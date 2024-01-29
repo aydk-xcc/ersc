@@ -1,5 +1,4 @@
 export function resolve(...arg) {
-   console.log(arg);
    if (arg.length === 0) {
         return '';
    }
@@ -28,7 +27,6 @@ export function resolve(...arg) {
             }
         }      
    });
-   console.log(path + '.js');
    return path
 }
 

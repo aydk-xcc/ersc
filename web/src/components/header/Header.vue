@@ -7,23 +7,31 @@
     const ChangeProjectRef = ref(null);
     const projects = reactive([]);
     let currentProject = reactive({
-      name: ''
+      id: '',
+      name: '',
+      base_dir: '',
+      process: 0
     })
 
     function changeProject() {
-      ChangeProjectRef.value && ChangeProjectRef.value.showDialog();
+      ChangeProjectRef.value && ChangeProjectRef.value.showDialog(currentProject);
     }
 
     onMounted(() => {
       projectApi.getProjects().then(res => {
         projects.push(...res.data);
-        console.log(projects);
         if (projects.length) {
           currentProject.name = projects[0].name;
-          console.log(currentProject);
-        }
+          currentProject.id = projects[0].id;
+          currentProject.base_dir = projects[0].base_dir;
+        } 
+        emits('currentProject', currentProject);
       })
     })
+
+    const emits = defineEmits([
+      'currentProject'
+    ])
 </script>
 <template>
     <el-header class="header">
@@ -38,7 +46,7 @@
         <div class="message">easy read source code</div>
       </div>
       <div>
-        <el-avatar shape="square" :size="40" fit="fill" :src="avatar" />
+        <el-avatar shape="square" :size="35" fit="fill" :src="avatar" />
       </div>
       <ChangeProject
         ref="ChangeProjectRef"

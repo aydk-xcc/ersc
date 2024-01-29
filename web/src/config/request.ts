@@ -1,4 +1,6 @@
-import axios from 'axios'
+import axios from 'axios';
+import { dealUrlWithParams } from '@/utils/url';
+
 // 创建一个 axios 实例
 const service = axios.create({
     timeout: 60000, // 请求超时时间毫秒
@@ -12,6 +14,12 @@ const service = axios.create({
 service.interceptors.request.use(
     function (config) {
         // 在发送请求之前做些什么
+        console.log(config);
+        let url = config.url;
+        // 这里把post和get的url的传递参数的数据结构统一
+        config.url = dealUrlWithParams(url, config.params);
+
+        console.log(config);
         return config
     },
     function (error) {
@@ -30,7 +38,7 @@ service.interceptors.response.use(
         // dataAxios 是 axios 返回数据中的 data
         const dataAxios = response.data
         // 这个状态码是和后端约定的
-        const code = dataAxios.reset
+        // const code = dataAxios.reset
         return dataAxios
     },
     function (error) {

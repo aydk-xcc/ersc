@@ -3,8 +3,12 @@ import { fileUrl } from "@/const/url";
 /**
  * 查询所有文件
  */
-export const getFiles = () => {
-    return request.get(fileUrl.filesUrl);
+export const getFiles = (base_dir: string) => {
+    return request.get(fileUrl.filesUrl, {
+        params: {
+            base_dir
+        }
+    });
 }
 
 /**

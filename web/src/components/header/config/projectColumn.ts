@@ -2,7 +2,8 @@ export default [
     {
         label: '项目名称',
         tooltips: true,
-        prop: 'name'
+        prop: 'name',
+        slot: 'name'
     },
     {
         label: '入口文件',

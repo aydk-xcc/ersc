@@ -2,9 +2,12 @@
     import { reactive, ref } from 'vue';
     import projectApi from '@/api/projectApi';
     import Table from '@/components/table/Table.vue'
+    import {useProjectStore} from '@/stores/project';
     import projectColumn from '@/components/header/config/projectColumn';
+    import AddProjectDialog from '@/components/header/dialog/AddProjectDialog.vue';
 
     const dialogVisible = ref(false);
+    const AddProjectDialogRef = ref(null);
     const projects = ref([]);
     const tableConfig = reactive({
         refresh: true,
@@ -13,19 +16,35 @@
         showIndex: true,
         hiddenPagination: true
     });
+    const current = reactive({
+        id: ''
+    });
+
+    const store = useProjectStore();
 
 
     function handleClose() {
         dialogVisible.value = false;
     }
 
-    function showDialog() {
+    function showDialog(project) {
         dialogVisible.value = true;
-        projectApi.getProjects().then(res => {
-            projects.value = [];
-            projects.value.push(...res.data);
-            console.log(projects);
+        current.id = project.id;
+    }
+
+    function changeProject(row) {
+        current.id = row.id;
+        store.updateCurrentProject(row);
+    }
+
+    function deleteProject(row) {
+        projectApi.delProject(row.id).then(res => {
+            console.log(res);
         })
+    }
+
+    function addProject() {
+        AddProjectDialogRef.value && AddProjectDialogRef.value.showDialog();
     }
 
     defineExpose({
@@ -45,14 +64,25 @@
             :table-column="projectColumn"
         >
             <template v-slot:header-left>
-                <el-button type="primary" size="small" @click="addDuty">新增源码</el-button>
+                <el-button type="primary" size="small" @click="addProject">新增源码</el-button>
+                <AddProjectDialog
+                    ref="AddProjectDialogRef"
+                />
+            </template>
+            <template v-slot:name="scope">
+                {{ scope.row.name }}
+                <el-tag 
+                    v-if="current.id === scope.row.id"
+                    size="small"
+                    round
+                >now</el-tag>
             </template>
             <template v-slot:operate="scope">
                 <el-button 
                     link 
                     type="primary" 
                     size="small" 
-                    @click="showDutyRecord(scope.row)"
+                    @click="changeProject(scope.row)"
                 >切换</el-button>
                 <el-button
                     link 
@@ -64,7 +94,7 @@
                     link
                     type="primary" 
                     size="small"
-                    @click="showIcafe(scope.row)"
+                    @click="deleteProject(scope.row)"
                 >删除</el-button>
             </template>
         </Table>

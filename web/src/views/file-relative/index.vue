@@ -146,7 +146,7 @@ onMounted(async () => {
     </div>
 </template>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
     .app-content {
         height: calc(100% - 50px);
     }

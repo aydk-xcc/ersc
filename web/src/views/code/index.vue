@@ -4,6 +4,8 @@
   import {ArrowRightBold} from '@element-plus/icons-vue';
   import fileApi from '@/api/fileApi';
   import editor from '@/components/editor/Index.vue';
+  import { MutationType } from 'pinia';
+  import { useProjectStore } from '@/stores/project';
 
   interface File {
       label: string,
@@ -26,14 +28,34 @@
   }
   const files: File[] = reactive([]);
   const editorViewRef = ref(editor);
+  const projectStore = useProjectStore();
+
+  projectStore.$subscribe((mutation, state) => {
+    console.log(mutation, state);
+    if (mutation.storeId === 'project') {
+      // 修改的是project
+      
+    }
+  })
+
+  function getProjectInfo() {
+    fileApi.getFiles(projectStore.getCUrrentProject.base_dir).then((res: AxiosResponse<flesResponse>) => {
+      console.log(res);
+      if (res.data) {
+        files.push(...res.data.arr);
+      }
+    })
+  }
+
   onMounted(async () => {
-    fileApi.getFiles().then((res: AxiosResponse<flesResponse>) => {
+    fileApi.getFiles('vuex').then((res: AxiosResponse<flesResponse>) => {
       console.log(res);
       if (res.data) {
         files.push(...res.data.arr);
       }
     })
   });
+
   // onUnmounted(() => toRaw(editor)?.dispose());
 
 
