@@ -29,17 +29,18 @@
   const files: File[] = reactive([]);
   const editorViewRef = ref(editor);
   const projectStore = useProjectStore();
-
   projectStore.$subscribe((mutation, state) => {
     console.log(mutation, state);
     if (mutation.storeId === 'project') {
       // 修改的是project
-      
+      if (state.projectInfo.id) {
+        getProjectInfo();
+      }
     }
   })
 
   function getProjectInfo() {
-    fileApi.getFiles(projectStore.getCUrrentProject.base_dir).then((res: AxiosResponse<flesResponse>) => {
+    fileApi.getFiles(projectStore.projectInfo.base_dir).then((res: AxiosResponse<flesResponse>) => {
       console.log(res);
       if (res.data) {
         files.push(...res.data.arr);
@@ -47,13 +48,12 @@
     })
   }
 
+
   onMounted(async () => {
-    fileApi.getFiles('vuex').then((res: AxiosResponse<flesResponse>) => {
-      console.log(res);
-      if (res.data) {
-        files.push(...res.data.arr);
-      }
-    })
+    console.log('当前的项目', projectStore.projectInfo);
+    if (projectStore.projectInfo.id) {
+      getProjectInfo();
+    }
   });
 
   // onUnmounted(() => toRaw(editor)?.dispose());

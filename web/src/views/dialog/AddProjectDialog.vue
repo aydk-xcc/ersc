@@ -2,13 +2,21 @@
     import { reactive, ref,  } from 'vue';
     import fileApi from '@/api/fileApi';
     import projectApi from '@/api/projectApi';
+    import {cloneDeep} from 'lodash-es';
     const dialogVisible = ref(false);
     const submitData = new FormData();
     const formRef = ref(null);
     const formData = reactive({
         name: '',
-        entry: ''
+        entry: '',
+        version: '',
+        base_dir: ''
     });
+    const entryList = ref([]);
+    const loading = ref(false);
+    const emits = defineEmits([
+        'refresh'
+    ])
 
     const rules = {
         name: [{
@@ -33,15 +41,18 @@
             },
             trigger: 'blur'
         }],
+        version: [{
+            required: true,
+            message: '必填'
+        }],
         entry: [{
             required: true,
             message: '必填'
         }]
     };
 
-    const entryList = ref([]);
     function handleClose() {
-
+        dialogVisible.value = false;
     }
 
     function showDialog() {
@@ -49,18 +60,22 @@
     }
 
     function addProject() {
-        formRef.value && formRef.value.validate().then(res => {
-            // submitData.append('name', formData.name);
-            // submitData.append('entry', formData.name);
-
-            fileApi.uploadFiles(submitData).then(res => {
-                console.log(res);
-            });
-        })
+        formRef.value && formRef.value.validate().then(async () => {
+            try {
+                loading.value = true;
+                const res = await fileApi.uploadFiles(submitData);
+                formData.base_dir = res.data;
+                await projectApi.addProject(cloneDeep(formData));
+                loading.value = false;
+                emits('refresh');
+                dialogVisible.value = false;
+            } catch (error) {
+                loading.value = false;
+            }
+        });
     }
 
-    function handleFileChange(e: Event) {
-        console.log(e.target.files);
+    function handleFileChange(e: BlobEvent) {
       // 处理选择的文件夹中的文件
         let files = e.target.files;
         const fileContents = [];
@@ -79,6 +94,9 @@
 <template>
     <el-dialog
         v-model="dialogVisible"
+        v-loading="loading"
+        element-loading-text="Loading..."
+        element-loading-background="rgba(255, 255, 255, 0.7)"
         title="添加源码项目"
         width="75%"
         append-to-body
@@ -92,6 +110,9 @@
         >
             <el-form-item label="项目名称" prop="name">
                 <el-input v-model="formData.name" />
+            </el-form-item>
+            <el-form-item label="项目版本" prop="version">
+                <el-input v-model="formData.version" />
             </el-form-item>
             <el-form-item label="入口文件" prop="entry">
                 <el-select 

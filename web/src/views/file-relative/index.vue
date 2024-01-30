@@ -97,40 +97,40 @@ onMounted(async () => {
             },
         }
     })
-    fileApi.getFiles().then(res => {
-        files.value  = res.data;
-        dealModuleRelative(files.value);
-        console.log(data);
-        let dagreLayout = new DagreLayout({
-            type: 'dagre',
-            rankdir: 'LR',
-            align: 'UL',
-            ranksep: 50,
-            nodesep: 50,
-            controlPoints: true,
-        });
-        graph.fromJSON(dagreLayout.layout(data)) // 渲染元素
-        graph.on('node:mouseenter', args => {
-            // console.log(args.node.getConnectedEdges());
-            console.log(graph.getConnectedEdges(args.node));
-            let edges = graph.getConnectedEdges(args.node);
-            edges.forEach(edge => {
-                edge.attr('line/stroke', 'blue'); // 设置连接线颜色为红色
-            });
-        });
-        graph.on('node:mouseleave', args => {
-            // console.log(args.node.getConnectedEdges());
-            console.log(graph.getConnectedEdges(args.node));
-            let edges = graph.getConnectedEdges(args.node);
-            edges.forEach(edge => {
-                edge.attr('line/stroke', '#8f8f8f'); // 设置连接线颜色为红色
-            });
-        });
-        graph.on('edge:mouseenter', args => {
-            console.log(args);
-        });
-        // graph.centerContent() // 居中显示
-    })
+    // fileApi.getFiles().then(res => {
+    //     files.value  = res.data;
+    //     dealModuleRelative(files.value);
+    //     console.log(data);
+    //     let dagreLayout = new DagreLayout({
+    //         type: 'dagre',
+    //         rankdir: 'LR',
+    //         align: 'UL',
+    //         ranksep: 50,
+    //         nodesep: 50,
+    //         controlPoints: true,
+    //     });
+    //     graph.fromJSON(dagreLayout.layout(data)) // 渲染元素
+    //     graph.on('node:mouseenter', args => {
+    //         // console.log(args.node.getConnectedEdges());
+    //         console.log(graph.getConnectedEdges(args.node));
+    //         let edges = graph.getConnectedEdges(args.node);
+    //         edges.forEach(edge => {
+    //             edge.attr('line/stroke', 'blue'); // 设置连接线颜色为红色
+    //         });
+    //     });
+    //     graph.on('node:mouseleave', args => {
+    //         // console.log(args.node.getConnectedEdges());
+    //         console.log(graph.getConnectedEdges(args.node));
+    //         let edges = graph.getConnectedEdges(args.node);
+    //         edges.forEach(edge => {
+    //             edge.attr('line/stroke', '#8f8f8f'); // 设置连接线颜色为红色
+    //         });
+    //     });
+    //     graph.on('edge:mouseenter', args => {
+    //         console.log(args);
+    //     });
+    //     // graph.centerContent() // 居中显示
+    // })
 
     // graph.addNode({
     //     shape: 'custom-vue-node',

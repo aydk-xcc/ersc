@@ -2,11 +2,13 @@ declare namespace Project {
     interface Project {
         id?: number;
         name: string;
-        process: number;
+        all_rows?: number;
+        read_rows?: number;
+        version: string;
         entry: string;
-        user_id: number;
+        user_id?: number;
         base_dir: string;
-        createdAt: number;
-        updatedAt: number;
+        createdAt?: number;
+        updatedAt?: number;
     }
 }

@@ -8,11 +8,6 @@ const erscTree = {
     files: []
 }
 
-getFiles(erscTree.baseDir, '');
-fileUtils.noExitAndCreate(`./output/${erscTree.name}`);
-erscTree.files.forEach(file => getSingleFile(file));
-saveJson();
-
 /**
  * 
  * @param {*} baseDir 根目录

@@ -6,6 +6,7 @@ router.get('', async (req: any, res: any) => {
     try {
       let query = req.query;
       let rows = await db.getProjects(query);
+      console.log(rows);
       res.send({
         data: rows,
         code: 200,
@@ -22,7 +23,6 @@ router.get('', async (req: any, res: any) => {
   
   router.delete('/:id', async (req: any, res: any) => {
     try {
-      console.log(req.params.id);
       let result = await db.delProject(+req.params.id);
       res.send({
         data: result,
@@ -40,8 +40,8 @@ router.get('', async (req: any, res: any) => {
 
   router.post('' ,async (req: any, res: any) => {
     try {
-      console.log(req.body);
-      let result = await db.delProject(+req.params.id);
+      console.log(22, req.body);
+      let result = await db.addProject(req.body);
       res.send({
         data: result,
         code: 200,

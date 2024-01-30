@@ -1,5 +1,5 @@
 /**
- * Get2 the first item that pass the test
+ * Get the first item that pass the test
  * by second argument function
  *
  * @param {Array} list

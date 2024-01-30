@@ -3,8 +3,8 @@
     import projectApi from '@/api/projectApi';
     import Table from '@/components/table/Table.vue'
     import {useProjectStore} from '@/stores/project';
-    import projectColumn from '@/components/header/config/projectColumn';
-    import AddProjectDialog from '@/components/header/dialog/AddProjectDialog.vue';
+    import projectColumn from '@/views/column-config/projectColumn';
+    import AddProjectDialog from '@/views/dialog/AddProjectDialog.vue';
 
     const dialogVisible = ref(false);
     const AddProjectDialogRef = ref(null);
@@ -47,6 +47,10 @@
         AddProjectDialogRef.value && AddProjectDialogRef.value.showDialog();
     }
 
+    function refresh() {
+
+    }
+
     defineExpose({
         showDialog
     })
@@ -67,6 +71,7 @@
                 <el-button type="primary" size="small" @click="addProject">新增源码</el-button>
                 <AddProjectDialog
                     ref="AddProjectDialogRef"
+                    @refresh=""
                 />
             </template>
             <template v-slot:name="scope">
@@ -123,4 +128,4 @@
             height: 45px;
         }
     }
-</style>
+</style>@/views/layout/header/config/projectColumn

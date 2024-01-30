@@ -1,13 +1,22 @@
 <script setup lang="ts">
   import { RouterView, useRoute } from 'vue-router';
-  import { ref, watchEffect, onMounted } from 'vue';
+  import { ref, reactive, watchEffect, onMounted } from 'vue';
   import {Loading} from '@element-plus/icons-vue';
   import { Picture, Document, ArrowRightBold, ArrowLeftBold } from '@element-plus/icons-vue';
-  import Header from '@/components/header/Header.vue';
+  import Header from '@/views/layout/Header.vue';
+  import AddProjectDialog from '@/views/dialog/AddProjectDialog.vue';
 
   const isCollapse = ref(false);
   const currentPath = ref('/graph');
-  const currentProject = ref(null);
+  const AddProjectDialogRef = ref(null);
+  const currentProject = reactive({
+    id: '',
+    name: '',
+    base_dir: '',
+    all_rows: 0,
+    read_rows: 0,
+    version: ''
+  });
   const loading = ref(false);
 
   function handleCollapse() {
@@ -16,8 +25,16 @@
   const route = useRoute();
 
   function loadProject(e: Project.Project) {
-    currentProject.value = e;
+    Object.assign(currentProject, e);
     loading.value = false;
+  }
+
+  function addProject() {
+    AddProjectDialogRef.value && AddProjectDialogRef.value.showDialog();
+  }
+
+  function reload() {
+    location.reload();
   }
 
   onMounted(() => {
@@ -40,7 +57,7 @@
     <Header
       @currentProject="loadProject"
     />
-    <el-container>
+    <el-container v-if="currentProject.id">
       <el-aside style="width:auto;">
         <el-menu
           :default-active="currentPath"
@@ -68,6 +85,21 @@
       <el-main class="main">
         <RouterView />
       </el-main>
+    </el-container>
+    <el-container v-else class="main nodata">
+      <el-empty>
+        <template v-slot:description>
+          还没有开始源码阅读哦，开始从
+          <el-button
+            type="text"
+            @click="addProject">本地导入</el-button>
+          吧
+        </template>
+        <AddProjectDialog
+          ref="AddProjectDialogRef"
+          @refresh="reload"
+        ></AddProjectDialog>
+      </el-empty>
     </el-container>
   </el-container>
 </template>
@@ -106,5 +138,12 @@
   }
   .main {
     padding: 0px;
+  }
+
+  .nodata {
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
   }
 </style>

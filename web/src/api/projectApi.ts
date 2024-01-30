@@ -3,7 +3,7 @@ import { project } from "@/const/url";
 /**
  * 查询所有文件
  */
-export const getProjects = (pageNum: Number, pageSize: Number, params: {} | null) => {
+export const getProjects = (pageNum: Number, pageSize: Number, params?: {} | null) => {
     return request.get(project.projectsUrl, {
         params: {
             ...params,
@@ -21,7 +21,12 @@ export const delProject = (id: number) => {
     });
 }
 
+export const addProject = (projectInfo: Project.Project) => {
+    request.post(project.projectsUrl, projectInfo);
+}
+
 export default {
     getProjects,
-    delProject
+    delProject,
+    addProject
 }

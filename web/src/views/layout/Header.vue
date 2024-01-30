@@ -2,16 +2,20 @@
     import { reactive, ref, onMounted } from 'vue';
     import projectApi from '@/api/projectApi';
     import {Switch} from '@element-plus/icons-vue';
-    import ChangeProject from '@/components/header/dialog/ChangeProject.vue';
+    import ChangeProject from '@/views/dialog/ChangeProject.vue';
     import avatar from '@/assets/image/avatar.png';
+    import {useProjectStore} from '@/stores/project';
     const ChangeProjectRef = ref(null);
     const projects = reactive([]);
     let currentProject = reactive({
       id: '',
       name: '',
       base_dir: '',
-      process: 0
-    })
+      all_rows: 0,
+      read_rows: 0,
+      version: ''
+    });
+    const projectStore = useProjectStore();
 
     function changeProject() {
       ChangeProjectRef.value && ChangeProjectRef.value.showDialog(currentProject);
@@ -21,9 +25,8 @@
       projectApi.getProjects().then(res => {
         projects.push(...res.data);
         if (projects.length) {
-          currentProject.name = projects[0].name;
-          currentProject.id = projects[0].id;
-          currentProject.base_dir = projects[0].base_dir;
+          Object.assign(currentProject, projects[0]);
+          projectStore.updateCurrentProject(currentProject);
         } 
         emits('currentProject', currentProject);
       })
@@ -37,9 +40,10 @@
     <el-header class="header">
       <div>
         <div class="title">
-          <span>ERSC ｜ </span>
-          <span class="pro-name" @click="changeProject">
-            {{ currentProject.name }}
+          <span>ERSC</span>
+          <span v-if="currentProject.id"> ｜ </span>  
+          <span v-if="currentProject.id" class="pro-name" @click="changeProject">
+             {{ currentProject.name }}
             <el-icon><Switch /></el-icon>
           </span>
         </div>

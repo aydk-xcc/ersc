@@ -14,7 +14,7 @@
             // 清理默认右键菜单
             clearDefaultContextMenu();
             editor = monaco.editor.create(editorRef.value, {
-                value: 'My to-do list:\n* buy milk\n* buy coffee\n* write awesome code',
+                value: '',
                 language: "javascript",
                 fixedOverflowWidgets: true,
                 fontFamily: "Arial",
@@ -51,53 +51,53 @@
             // - Configuration for the Constrained Editor : Starts Here
             const constrainedInstance = constrainedEditor(monaco);
             constrainedInstance.initializeIn(editor);
-            constrainedInstance.addRestrictionsTo(model, [{
-                range: [1, 1, 3, 5], // Range of Function definition
-                allowMultiline: false,
-                label: 'funcDefinition'
-            }]);
+            // constrainedInstance.addRestrictionsTo(model, [{
+            //     range: [1, 1, 3, 5], // Range of Function definition
+            //     allowMultiline: false,
+            //     label: 'funcDefinition'
+            // }]);
 
-            editor.onContextMenu((e: monaco.editor.IEditorMouseEvent) => {
-                console.log(model?.getWordAtPosition(e.target.position));
-                console.log(model?.getLineContent(e.target.position.lineNumber));
-                console.log(model.getLineTokens)
+            // editor.onContextMenu((e: monaco.editor.IEditorMouseEvent) => {
+            //     console.log(model?.getWordAtPosition(e.target.position));
+            //     console.log(model?.getLineContent(e.target.position.lineNumber));
+            //     console.log(model.getLineTokens)
 
-            });
+            // });
 
-            editor.onDidChangeCursorPosition((e: monaco.editor.IEditorPositionChangeEvent) => {
-                console.log(model?.getOptions());
-                console.log(model?.getLineContent(e.position.lineNumber));
-                console.log(model?.getWordUntilPosition(e.position));
-                let lineContent = model?.getLineContent(e.position.lineNumber);
-                let firstNonWhitespaceIndex = model?.getLineFirstNonWhitespaceColumn(e.position.lineNumber);
-                let firstChart = lineContent[firstNonWhitespaceIndex];
-                console.log(monaco.editor.tokenize(lineContent, model.getLanguageId()));
-                let word = model?.getWordAtPosition(e.position);
-                let language = monaco.languages.getLanguages().find(item => item.id === model.getLanguageId());
-                if (['*', '/'].includes(firstChart)) {
-                    console.log('comment');
-                }
-            });
+            // editor.onDidChangeCursorPosition((e: monaco.editor.IEditorPositionChangeEvent) => {
+            //     console.log(model?.getOptions());
+            //     console.log(model?.getLineContent(e.position.lineNumber));
+            //     console.log(model?.getWordUntilPosition(e.position));
+            //     let lineContent = model?.getLineContent(e.position.lineNumber);
+            //     let firstNonWhitespaceIndex = model?.getLineFirstNonWhitespaceColumn(e.position.lineNumber);
+            //     let firstChart = lineContent[firstNonWhitespaceIndex];
+            //     console.log(monaco.editor.tokenize(lineContent, model.getLanguageId()));
+            //     let word = model?.getWordAtPosition(e.position);
+            //     let language = monaco.languages.getLanguages().find(item => item.id === model.getLanguageId());
+            //     if (['*', '/'].includes(firstChart)) {
+            //         console.log('comment');
+            //     }
+            // });
 
-            editor.onDidChangeCursorSelection((e: monaco.editor.IEditorSelectionChangeEvent) => {
-                console.log('onDidChangeCursorSelection', e.position);
-            });
+            // editor.onDidChangeCursorSelection((e: monaco.editor.IEditorSelectionChangeEvent) => {
+            //     console.log('onDidChangeCursorSelection', e.position);
+            // });
 
-            editor.onDidChangeModel((e: monaco.editor.IModelChangedEvent) => {
-                console.log('Editor model changed:', e.newModelUrl);
-            });
+            // editor.onDidChangeModel((e: monaco.editor.IModelChangedEvent) => {
+            //     console.log('Editor model changed:', e.newModelUrl);
+            // });
 
-            monaco.editor.addCommand({
-                id: 'test',
-                run: () => {}
-            })
+            // monaco.editor.addCommand({
+            //     id: 'test',
+            //     run: () => {}
+            // })
 
 
-            let p1 = new monaco.Position(1, 2);
-            let p2 = new monaco.Position(0, 9);
-            monaco.Position.compare(p1, p2);
-            console.log(monaco.Position.compare(p1, p2))
-            console.log()
+            // let p1 = new monaco.Position(1, 2);
+            // let p2 = new monaco.Position(0, 9);
+            // monaco.Position.compare(p1, p2);
+            // console.log(monaco.Position.compare(p1, p2))
+            // console.log()
         }
 	});
     onUnmounted(() => toRaw(editor)?.dispose());

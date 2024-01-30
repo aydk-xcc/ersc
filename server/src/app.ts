@@ -8,7 +8,7 @@ const fileRouter = require('./router/file');
 
 dotenv.config();
 db.initDB();
-
+app.use(express.json());
 app.use('/api/v1/projects', projectRouter);
 app.use('/api/v1/file', fileRouter);
 

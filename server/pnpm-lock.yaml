@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@types/formidable':
+    specifier: ^3.4.5
+    version: registry.npmmirror.com/@types/formidable@3.4.5
   acorn:
     specifier: ^8.10.0
     version: registry.npmmirror.com/acorn@8.11.3
@@ -14,6 +17,9 @@ dependencies:
   express:
     specifier: ^4.18.2
     version: registry.npmmirror.com/express@4.18.2
+  formidable:
+    specifier: ^3.5.1
+    version: registry.npmmirror.com/formidable@3.5.1
   multer:
     specifier: 1.4.5-lts.1
     version: registry.npmmirror.com/multer@1.4.5-lts.1
@@ -175,6 +181,14 @@ packages:
       '@types/serve-static': registry.npmmirror.com/@types/serve-static@1.15.5
     dev: true
 
+  registry.npmmirror.com/@types/formidable@3.4.5:
+    resolution: {integrity: sha512-s7YPsNVfnsng5L8sKnG/Gbb2tiwwJTY1conOkJzTMRvJAlLFW1nEua+ADsJQu8N1c0oTHx9+d5nqg10WuT9gHQ==, tarball: https://registry.npmmirror.com/@types/formidable/-/formidable-3.4.5.tgz}
+    name: '@types/formidable'
+    version: 3.4.5
+    dependencies:
+      '@types/node': registry.npmmirror.com/@types/node@20.11.5
+    dev: false
+
   registry.npmmirror.com/@types/http-errors@2.0.4:
     resolution: {integrity: sha512-D0CFMMtydbJAegzOyHjtiKPLlvnm3iTZyZRSZoLq2mRhDdmLfIWOCYPfQJ4cu2erKghU++QvjcUjp/5h7hESpA==, tarball: https://registry.npmmirror.com/@types/http-errors/-/http-errors-2.0.4.tgz}
     name: '@types/http-errors'
@@ -199,7 +213,6 @@ packages:
     version: 20.11.5
     dependencies:
       undici-types: registry.npmmirror.com/undici-types@5.26.5
-    dev: true
 
   registry.npmmirror.com/@types/qs@6.9.11:
     resolution: {integrity: sha512-oGk0gmhnEJK4Yyk+oI7EfXsLayXatCWPHary1MtcmbAifkobT9cM9yutG/hZKIseOU0MqbIwQ/u2nn/Gb+ltuQ==, tarball: https://registry.npmmirror.com/@types/qs/-/qs-6.9.11.tgz}
@@ -352,6 +365,12 @@ packages:
     resolution: {integrity: sha512-PCVAQswWemu6UdxsDFFX/+gVeYqKAod3D3UVm91jHwynguOwAvYPhx8nNlM++NqRcK6CxxpUafjmhIdKiHibqg==, tarball: https://registry.npmmirror.com/array-flatten/-/array-flatten-1.1.1.tgz}
     name: array-flatten
     version: 1.1.1
+    dev: false
+
+  registry.npmmirror.com/asap@2.0.6:
+    resolution: {integrity: sha512-BSHWgDSAiKs50o2Re8ppvp3seVHXSRM44cdSsT9FfNEUUZLOGWVCsiWaRPWM1Znn+mqZ1OfVZ3z3DWEzSp7hRA==, tarball: https://registry.npmmirror.com/asap/-/asap-2.0.6.tgz}
+    name: asap
+    version: 2.0.6
     dev: false
 
   registry.npmmirror.com/balanced-match@1.0.2:
@@ -698,6 +717,15 @@ packages:
     engines: {node: '>=8'}
     dev: false
 
+  registry.npmmirror.com/dezalgo@1.0.4:
+    resolution: {integrity: sha512-rXSP0bf+5n0Qonsb+SVVfNfIsimO4HEtmnIpPHY8Q1UCzKlQrDMfdobr8nJOOsRgWCyMRqeSBQzmWUMq7zvVig==, tarball: https://registry.npmmirror.com/dezalgo/-/dezalgo-1.0.4.tgz}
+    name: dezalgo
+    version: 1.0.4
+    dependencies:
+      asap: registry.npmmirror.com/asap@2.0.6
+      wrappy: registry.npmmirror.com/wrappy@1.0.2
+    dev: false
+
   registry.npmmirror.com/diff@4.0.2:
     resolution: {integrity: sha512-58lmxKSA4BNyLz+HHMUzlOEpg09FV+ev6ZMe3vJihgdxzgcwZ8VoEEPmALCZG9LmqfVoNMMKpttIYTVG6uDY7A==, tarball: https://registry.npmmirror.com/diff/-/diff-4.0.2.tgz}
     name: diff
@@ -859,6 +887,16 @@ packages:
       unpipe: registry.npmmirror.com/unpipe@1.0.0
     transitivePeerDependencies:
       - supports-color
+    dev: false
+
+  registry.npmmirror.com/formidable@3.5.1:
+    resolution: {integrity: sha512-WJWKelbRHN41m5dumb0/k8TeAx7Id/y3a+Z7QfhxP/htI9Js5zYaEDtG8uMgG0vM0lOlqnmjE99/kfpOYi/0Og==, tarball: https://registry.npmmirror.com/formidable/-/formidable-3.5.1.tgz}
+    name: formidable
+    version: 3.5.1
+    dependencies:
+      dezalgo: registry.npmmirror.com/dezalgo@1.0.4
+      hexoid: registry.npmmirror.com/hexoid@1.0.0
+      once: registry.npmmirror.com/once@1.4.0
     dev: false
 
   registry.npmmirror.com/forwarded@0.2.0:
@@ -1032,6 +1070,13 @@ packages:
     engines: {node: '>= 0.4'}
     dependencies:
       function-bind: registry.npmmirror.com/function-bind@1.1.2
+    dev: false
+
+  registry.npmmirror.com/hexoid@1.0.0:
+    resolution: {integrity: sha512-QFLV0taWQOZtvIRIAdBChesmogZrtuXvVWsFHZTk2SU+anspqZ2vMnoLg7IE1+Uk16N19APic1BuF8bC8c2m5g==, tarball: https://registry.npmmirror.com/hexoid/-/hexoid-1.0.0.tgz}
+    name: hexoid
+    version: 1.0.0
+    engines: {node: '>=8'}
     dev: false
 
   registry.npmmirror.com/http-cache-semantics@4.1.1:
@@ -2256,7 +2301,6 @@ packages:
     resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==, tarball: https://registry.npmmirror.com/undici-types/-/undici-types-5.26.5.tgz}
     name: undici-types
     version: 5.26.5
-    dev: true
 
   registry.npmmirror.com/unique-filename@1.1.1:
     resolution: {integrity: sha512-Vmp0jIp2ln35UTXuryvjzkjGdRyf9b2lTXuSYUiPmzRcl3FDtYqAwOnTJkAngD9SWhnoJzDbTKwaOrZ+STtxNQ==, tarball: https://registry.npmmirror.com/unique-filename/-/unique-filename-1.1.1.tgz}

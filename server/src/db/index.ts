@@ -8,7 +8,7 @@ const getAll = util.promisify(db.all.bind(db));
 const run = util.promisify(db.run.bind(db));
 
 exports.initDB = () => {
-    db.run('CREATE TABLE IF NOT EXISTS projects (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, process FLOAT, entry text, base_dir text, user_id INTEGER, createdAt INTEGER, updatedAt INTEGER)');
+    db.run('CREATE TABLE IF NOT EXISTS projects (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, all_rows INTEGER, read_rows INTEGER, version text, entry text, base_dir text, user_id INTEGER, createdAt INTEGER, updatedAt INTEGER)');
     db.run('CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, pwd text)');
 }
 
@@ -29,16 +29,21 @@ exports.getProjects = async (query: any) => {
 }
 
 exports.addProject = async (obj: Project.Project) => {
-    db.prepare(`insert into projects (name, entry, process, base_dir, user_id, createdAt, updatedAt) values(
-        ${obj.name},
-        ${obj.entry},
-        ${obj.process},
-        ${obj.base_dir},
-        ${obj.user_id},
-        ${obj.createdAt},
-        ${obj.updatedAt},
-    )`);
-    await db.run();
+    let sql = `insert into projects (name, version, entry, all_rows, read_rows, base_dir, user_id, createdAt, updatedAt) values(
+        '${obj.name}',
+        '${obj.version}',
+        '${obj.entry}',
+        0,
+        0,
+        '${obj.base_dir}',
+        ${obj.user_id || 1},
+        ${obj.createdAt || Date.now()},
+        ${obj.updatedAt || Date.now()}
+    )`;
+
+    console.log(sql);
+    return run(sql);
+
 }
 
 exports.delProject = async (id: number) => {
