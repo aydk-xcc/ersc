@@ -4,6 +4,7 @@
     import {Switch} from '@element-plus/icons-vue';
     import ChangeProject from '@/views/dialog/ChangeProject.vue';
     import avatar from '@/assets/image/avatar.png';
+    import logo from '@/assets/image/logo.png';
     import {useProjectStore} from '@/stores/project';
     const ChangeProjectRef = ref(null);
     const projects = reactive([]);
@@ -40,7 +41,7 @@
     <el-header class="header">
       <div>
         <div class="title">
-          <span>ERSC</span>
+          <img style="width: 70px;height: 30px" :src="logo"/>
           <span v-if="currentProject.id"> ｜ </span>  
           <span v-if="currentProject.id" class="pro-name" @click="changeProject">
              {{ currentProject.name }}

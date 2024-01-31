@@ -6,17 +6,21 @@ export default [
         slot: 'name'
     },
     {
+        label: '版本',
+        prop: 'version'
+    },
+    {
         label: '入口文件',
         prop: 'entry'
     },
     {
         label: '根目录',
         prop: 'base_dir',
-        width: 150
+        width: 240
     },
     {
         label: '进度',
-        slot: 'process',
+        prop: 'all_rows',
         width: 100,
     },
     {

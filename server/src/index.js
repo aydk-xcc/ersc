@@ -49,7 +49,7 @@ function getSingleFile(file) {
 }
 
 function saveJson() {
-    fileUtils.noExitAndCreate(`./output/${erscTree.name}`);
+    fileUtils.noExistAndCreate(`./output/${erscTree.name}`);
     fs.writeFileSync(`./output/${erscTree.name}/erscTree.json`, JSON.stringify(erscTree));
     // fs.writeFileSync(`./output/${erscTree.name}/fileOverView.json`, JSON.stringify(erscTree));
 }

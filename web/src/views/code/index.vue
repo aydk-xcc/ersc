@@ -13,15 +13,9 @@
       path: string,
       str?: string,
       isDir: boolean,
-      fullPath: string,
-      isEntry: boolean
+      fullPath: string
   }
 
-  interface flesResponse {
-    arr:  Array<File>;
-    basedir: string;
-    entry: string
-  }
   const defaultProps = {
     children: 'children',
     label: 'label',
@@ -40,17 +34,16 @@
   })
 
   function getProjectInfo() {
-    fileApi.getFiles(projectStore.projectInfo.base_dir).then((res: AxiosResponse<flesResponse>) => {
+    fileApi.getFiles(projectStore.projectInfo.base_dir).then((res: any) => {
       console.log(res);
       if (res.data) {
-        files.push(...res.data.arr);
+        files.push(...res.data);
       }
     })
   }
 
 
   onMounted(async () => {
-    console.log('当前的项目', projectStore.projectInfo);
     if (projectStore.projectInfo.id) {
       getProjectInfo();
     }

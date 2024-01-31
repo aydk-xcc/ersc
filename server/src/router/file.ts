@@ -1,9 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const {formidable} = require("formidable");
-const multer = require('../middleware/multer');
-var files = require('../codefile/files.ts');
-const fileUtils = require('../utils/fileUtils');
+const files = require('../module/files');
+const formMiddleWare = require('../middleware/formidable');
+
 
 router.get('/files', async (req: any, res: any) => {
   res.setHeader('Access-Control-Allow-Origin', '*')
@@ -23,7 +22,6 @@ router.get('/files', async (req: any, res: any) => {
 })
 
 router.get('/single_file', (req: any, res: any) => {
-  console.log(req.query.base_dir);
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.send({
     data: files.getSingleFile(req.query.name, req.query.path),
@@ -32,32 +30,15 @@ router.get('/single_file', (req: any, res: any) => {
   })
 })
 
-router.post('/upload',(req: any, res: any, next: any) => {
-  let tempPath = Date.now() + '_' + Math.round(Math.random() * 1E9);;
-  fileUtils.noExitAndCreate(tempPath);
-  const form = formidable({ 
-    multiples: true,
-    uploadDir: 'project/' + tempPath,
-    keepExtensions: true,
-    createDirsFromUploads: true,
-    filename: (name: string, ext: string, part: any, form: any) => {
-      const { originalFilename} = part;
-      console.log(name, originalFilename);
-      return originalFilename;
-    }
-  });
-
-  form.parse(req, (err: Error, fields: any, files: any) => {
-    if (err) {
-      next(err);
-      return;
-    }
-    res.send({
-      data: tempPath,
-      code: '',
-      message: 'success'
-    })
-  });
+router.post('/upload', formMiddleWare,(req: any, res: any, next: any) => {
+  res.send({
+    data: {
+      tempPath: req.tempPath,
+      totalRows: req.totalRows
+    },
+    code: '',
+    message: 'success'
+  })
 });
 
 module.exports = router;

@@ -1,5 +1,6 @@
 let fs = require('fs');
-exports.noExitAndCreate = function(path: string) {
+const {EXT_TYPE} = require('../const/const');
+exports.noExistAndCreate = function(path: string) {
     if (fs.existsSync(path)) {
         return true;
     } else {
@@ -9,8 +10,15 @@ exports.noExitAndCreate = function(path: string) {
     }
 }
 
+exports.existAndDelete = function(path: string) {
+    fs.rm(path, {
+        recursive: true
+    }, (err: any) => {
+        console.log(err);
+    });
+}
+
 exports.filesSort = function(files: Array<FileData.SingleFile>) {
-    console.log(files);
     files.sort((a: FileData.SingleFile, b: FileData.SingleFile) => {
         if (a.isDir && b.isDir) {
         // 都是目录
@@ -21,5 +29,17 @@ exports.filesSort = function(files: Array<FileData.SingleFile>) {
             return a.label < b.label ? -1: 0;
         }
     });
-    console.log(files);
+    files.forEach(file => {
+        if (file.isDir && file.children) {
+            this.filesSort(file.children);
+        }
+    })
+}
+
+exports.getFileExt = function(name: string) {
+    if (name.endsWith('.js')) {
+        return EXT_TYPE.JAVASCRIPT;
+    } else if (name.endsWith('.ts')) {
+        return EXT_TYPE.TYPESCRIPT;
+    }
 }

@@ -8,7 +8,8 @@
 
     const dialogVisible = ref(false);
     const AddProjectDialogRef = ref(null);
-    const projects = ref([]);
+    const tableRef = ref(null);
+    const loading = ref(false);
     const tableConfig = reactive({
         refresh: true,
         maxHeight: 'calc(100vh - 175px)',
@@ -38,8 +39,10 @@
     }
 
     function deleteProject(row) {
-        projectApi.delProject(row.id).then(res => {
-            console.log(res);
+        loading.value = true;
+        projectApi.delProject(row.id, row.base_dir).then(res => {
+            refresh();
+            loading.value = false;
         })
     }
 
@@ -48,7 +51,7 @@
     }
 
     function refresh() {
-
+        tableRef.value && tableRef.value.refresh();
     }
 
     defineExpose({
@@ -58,11 +61,15 @@
 <template>
     <el-dialog
         v-model="dialogVisible"
+        v-loading="loading"
+        element-loading-text="Loading..."
+        element-loading-background="rgba(255, 255, 255, 0.7)"
         title="切换项目"
-        width="75%"
+        width="90%"
         :before-close="handleClose"
     >
         <Table
+            ref="tableRef"
             :api="projectApi.getProjects"
             :table-config="tableConfig"
             :table-column="projectColumn"

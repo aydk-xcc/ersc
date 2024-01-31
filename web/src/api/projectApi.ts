@@ -13,10 +13,11 @@ export const getProjects = (pageNum: Number, pageSize: Number, params?: {} | nul
     });
 }
 
-export const delProject = (id: number) => {
+export const delProject = (id: number, base_dir: string) => {
     return request.delete(project.singleProjectsUrl, {
         params: {
-            id: id
+            id: id,
+            base_dir
         }
     });
 }

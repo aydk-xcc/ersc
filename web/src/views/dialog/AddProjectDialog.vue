@@ -3,12 +3,14 @@
     import fileApi from '@/api/fileApi';
     import projectApi from '@/api/projectApi';
     import {cloneDeep} from 'lodash-es';
+    import fileLimitation from '@/config/file-limitation';
     const dialogVisible = ref(false);
     const submitData = new FormData();
     const formRef = ref(null);
     const formData = reactive({
         name: '',
         entry: '',
+        all_rows: '',
         version: '',
         base_dir: ''
     });
@@ -64,7 +66,8 @@
             try {
                 loading.value = true;
                 const res = await fileApi.uploadFiles(submitData);
-                formData.base_dir = res.data;
+                formData.base_dir = res.data.tempPath;
+                formData.all_rows = res.data.totalRows;
                 await projectApi.addProject(cloneDeep(formData));
                 loading.value = false;
                 emits('refresh');
@@ -78,13 +81,16 @@
     function handleFileChange(e: BlobEvent) {
       // 处理选择的文件夹中的文件
         let files = e.target.files;
+        console.log(files);
         const fileContents = [];
         entryList.value = [];
         for (let i = 0; i < files.length; i++) {
-            entryList.value.push(files[i].webkitRelativePath);
-            submitData.append('_ersc_file/' + files[i].webkitRelativePath.replace('/' + files[i].name, ''), files[i]);
+            if (fileLimitation(files[i].webkitRelativePath)) {
+                entryList.value.push(files[i].webkitRelativePath);
+                submitData.append(files[i].webkitRelativePath.replace('/' + files[i].name, ''), files[i]);
+            }
         }
-
+        console.log(entryList);
     }
 
     defineExpose({

@@ -1,9 +1,10 @@
-import { error } from "console";
 const util = require('util');
 const sqlite3 = require('sqlite3');
 const sqlUtils = require('../utils/sqlUtils');
+const fileUtils = require('../utils/fileUtils');
 
-const db = new sqlite3.Database('./ersc_db.db');
+fileUtils.noExistAndCreate('.ersc');
+const db = new sqlite3.Database('./.ersc/ersc_db.db');
 const getAll = util.promisify(db.all.bind(db));
 const run = util.promisify(db.run.bind(db));
 
@@ -24,7 +25,6 @@ exports.getProjects = async (query: any) => {
         sql += ` where ${arr.join(' and ')}`
     }
     sql += sqlUtils.formatSql(query);
-    console.log(sql);
     return await getAll(sql, []);
 }
 
@@ -33,15 +33,13 @@ exports.addProject = async (obj: Project.Project) => {
         '${obj.name}',
         '${obj.version}',
         '${obj.entry}',
-        0,
+        '${obj.all_rows}',
         0,
         '${obj.base_dir}',
         ${obj.user_id || 1},
         ${obj.createdAt || Date.now()},
         ${obj.updatedAt || Date.now()}
     )`;
-
-    console.log(sql);
     return run(sql);
 
 }
