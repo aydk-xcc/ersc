@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { onBeforeUnmount, onMounted, onUnmounted, reactive, ref, toRaw } from 'vue'
+  import { onMounted, onUpdated, reactive, ref } from 'vue'
   import type { AxiosResponse } from 'axios';
   import {ArrowRightBold} from '@element-plus/icons-vue';
   import fileApi from '@/api/fileApi';
@@ -22,7 +22,9 @@
   }
   const files: File[] = reactive([]);
   const editorViewRef = ref(editor);
+  const defaultExpandKeys: Array<string> = reactive([]);
   const projectStore = useProjectStore();
+  const currentFile = ref('');
   projectStore.$subscribe((mutation, state) => {
     console.log(mutation, state);
     if (mutation.storeId === 'project') {
@@ -34,16 +36,40 @@
   })
 
   function getProjectInfo() {
+    initDefaultExpand();
     fileApi.getFiles(projectStore.projectInfo.base_dir).then((res: any) => {
-      console.log(res);
+      files.splice(0, files.length);
       if (res.data) {
         files.push(...res.data);
+        currentFile.value = projectStore.projectInfo.entry;
+        fileApi.getFile(projectStore.projectInfo.base_dir + '/' + projectStore.projectInfo.entry).then(res => {
+          editorViewRef.value.updateValue(res.data.str);
+        })
       }
     })
   }
 
+  function initDefaultExpand() {
+    defaultExpandKeys.splice(0,defaultExpandKeys.length);
+    let arr = projectStore.projectInfo.entry.split('/');
+    if (arr.length) {
+      arr.slice(0, arr.length - 1).forEach((item: string) => {
+        if (defaultExpandKeys.length) {
+          defaultExpandKeys.push(`${defaultExpandKeys[defaultExpandKeys.length - 1]}/${item}`);
+        } else {
+          defaultExpandKeys.push(`${projectStore.projectInfo.base_dir}/${item}`);
+        }
+      })
+    }
+  }
 
   onMounted(async () => {
+    if (projectStore.projectInfo.id) {
+      getProjectInfo();
+    }
+  });
+
+  onUpdated(async () => {
     if (projectStore.projectInfo.id) {
       getProjectInfo();
     }
@@ -54,8 +80,9 @@
 
   const handleNodeClick = (data: File) => {
     if (!data.isDir) {
-      fileApi.getFile(data.label, data.path).then(res => {
-        editorViewRef.value.updateValue(res.data);
+      currentFile.value = data.fullPath.replace(projectStore.projectInfo?.base_dir + '/', '');
+      fileApi.getFile(data.fullPath).then(res => {
+        editorViewRef.value.updateValue(res.data.str);
       })
     }
   }
@@ -63,11 +90,15 @@
 
 <template>
   <div class="common-layout">
-    <el-container>
+    <el-container class="main-container">
       <el-aside class="slider" width="200px">
         <el-tree
           :data="files"
+          :default-expanded-keys="defaultExpandKeys"
           :icon="ArrowRightBold"
+          :current-node-key="projectStore.projectInfo.base_dir + '/' + projectStore.projectInfo.entry"
+          node-key="fullPath"
+          :highlight-current="true"
           :props="defaultProps"
           @node-click="handleNodeClick"
         >
@@ -75,7 +106,7 @@
             <span class="custom-tree-node">
               <span>{{ node.label }}</span>
               <span
-                v-if="data.label === 'index.js'"
+                v-if="data.fullPath === projectStore.projectInfo.base_dir + '/' + projectStore.projectInfo.entry"
                 class="index-file-icon" 
                 type="primary"
               >入</span>
@@ -83,13 +114,20 @@
           </template>
         </el-tree>
       </el-aside>
-      <el-main class="main">
-        <div class="editor-view">
-          <editor ref="editorViewRef"></editor>
-        </div>
-        <div class="right">
-            test
+      <el-main class="editor-container">
+        <el-breadcrumb class="breadcrumb" separator="/">
+          <el-breadcrumb-item
+            v-for="(item, index) in currentFile.split('/')"
+          >{{ item }}</el-breadcrumb-item>
+        </el-breadcrumb>
+        <div class="editor-container-view">
+          <div class="editor-view">
+            <editor ref="editorViewRef"></editor>
+          </div>
+          <div class="right">
+              test
 
+          </div>
         </div>
       </el-main>
     </el-container>
@@ -109,7 +147,7 @@
     border-radius: 4px;
   }
  .common-layout, .el-container {
-  height: 100%;
+    height: 100%;
  }
   .slider {
     background-color: white;
@@ -126,11 +164,26 @@
     background-color: #ecf5ff;
   }
 
-  .main {
+  .main-container {
+    height: 100%;
+  }
+  .editor-container {
     padding: 0px;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     height: 100%;
+    .breadcrumb {
+      padding: 0px 0 10px 8px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .editor-container-view {
+      padding: 0px;
+      display: flex;
+      flex-direction: row;
+      height: calc(100% - 25px);
+    }
+
     .editor-view {
       display: flex;
       flex: 1 0 auto;
@@ -142,5 +195,9 @@
       border-left: 1px solid #f0f0f0;
     }
   }
+  ::v-deep .el-tree {
+    width: max-content;
+    min-width: 200px;
+    padding-right: 10px;
+  }
 </style>
-./components/editor/Index.vue@/config/request

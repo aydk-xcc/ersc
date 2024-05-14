@@ -1,5 +1,5 @@
 const express = require('express');
-const db = require('../db/index');
+const db = require('../module/db-operator/index');
 const router = express.Router();
 const {existAndDelete} = require('../utils/fileUtils');
 const {BASE_DIR} = require('../const/const');

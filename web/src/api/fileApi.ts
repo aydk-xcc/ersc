@@ -11,13 +11,21 @@ export const getFiles = (base_dir: string) => {
     });
 }
 
+export const getFileRelative = (base_dir: string, entry: string) => {
+    return request.get(fileUrl.fileRelativeUrl, {
+        params: {
+            base_dir,
+            entry
+        }
+    });
+}
+
 /**
  * 查询单个文件
  */
-export const getFile = (name: string, path: string) => {
+export const getFile = (path: string) => {
     return request.get(fileUrl.fileUrl, {
         params: {
-            name: name,
             path
         }
     });
@@ -35,5 +43,6 @@ export const uploadFiles = (formdata:FormData) => {
 export default {
     getFiles,
     getFile,
-    uploadFiles
+    uploadFiles,
+    getFileRelative
 }

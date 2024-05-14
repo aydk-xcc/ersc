@@ -1,9 +1,10 @@
 <script setup lang='ts'>
-    import { reactive, ref,  } from 'vue';
+import { reactive, ref, nextTick } from 'vue';
     import fileApi from '@/api/fileApi';
     import projectApi from '@/api/projectApi';
     import {cloneDeep} from 'lodash-es';
     import fileLimitation from '@/config/file-limitation';
+    import {getVersionByPackageJson} from '@/utils/file';
     const dialogVisible = ref(false);
     const submitData = new FormData();
     const formRef = ref(null);
@@ -57,18 +58,25 @@
         dialogVisible.value = false;
     }
 
-    function showDialog() {
+    async function showDialog() {
         dialogVisible.value = true;
+        formData.name = '';
+        formData.entry = '';
+        formData.all_rows = 0;
+        formData.version = '';
+        formData.base_dir = '';
+        await nextTick();
+        formRef.value && formRef.value.clearValidate()
     }
 
     function addProject() {
         formRef.value && formRef.value.validate().then(async () => {
             try {
                 loading.value = true;
+                submitData.append('name', formData.name);
+                submitData.append('version', formData.version);
+                submitData.append('entry', formData.entry);
                 const res = await fileApi.uploadFiles(submitData);
-                formData.base_dir = res.data.tempPath;
-                formData.all_rows = res.data.totalRows;
-                await projectApi.addProject(cloneDeep(formData));
                 loading.value = false;
                 emits('refresh');
                 dialogVisible.value = false;
@@ -85,6 +93,13 @@
         const fileContents = [];
         entryList.value = [];
         for (let i = 0; i < files.length; i++) {
+            if (files[i].name === 'package.json') {
+                let fileReader = new FileReader();
+                fileReader.onload = () => {
+                    formData.version = getVersionByPackageJson(fileReader.result);
+                }
+                fileReader.readAsText(files[i]);
+            }
             if (fileLimitation(files[i].webkitRelativePath)) {
                 entryList.value.push(files[i].webkitRelativePath);
                 submitData.append(files[i].webkitRelativePath.replace('/' + files[i].name, ''), files[i]);

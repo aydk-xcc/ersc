@@ -1,4 +1,5 @@
-let fs = require('fs');
+const fs = require('fs');
+const path = require('path');
 const {EXT_TYPE} = require('../const/const');
 exports.noExistAndCreate = function(path: string) {
     if (fs.existsSync(path)) {
@@ -42,4 +43,25 @@ exports.getFileExt = function(name: string) {
     } else if (name.endsWith('.ts')) {
         return EXT_TYPE.TYPESCRIPT;
     }
+}
+
+exports.getSrcDir = function(fullPath: string) {
+    if (fullPath && fullPath.includes('src')) {
+        return fullPath.replace(/(.*\/src)(.*)/, '$1');
+    }
+    return '';
+}
+
+
+
+
+exports.isOutDepence = function(fullPath: string) {
+    if (!fullPath) {
+        return false;
+    }
+console.log(22, fullPath, fs.existsSync(fullPath));
+    if (fs.existsSync(fullPath)) {
+        return false;
+    }
+    return true;
 }

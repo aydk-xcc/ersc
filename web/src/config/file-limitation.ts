@@ -11,8 +11,15 @@ const UN_ALLOW_FILE_DIRECTORY = [
     'dist/',
     'static/',
     'example/',
+    'examples/',
+    'test/',
+    'types/',
+    'typing/',
+    'docs/',
     'assets/',
-    'assets/'
+    'scripts/',
+    'jest.config.js',
+    'rollup.config.js'
 ]
 
 function isAllowDirectory(name: string) {

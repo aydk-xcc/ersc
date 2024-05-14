@@ -1,7 +1,8 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const app = express()
-const db = require('./db/index');
+const db = require('./module/db-operator/index');
+const bodyParser = require('body-parser');
 
 const projectRouter = require('./router/project');
 const fileRouter = require('./router/file');

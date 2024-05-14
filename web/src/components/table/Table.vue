@@ -174,6 +174,7 @@ import dayjs from 'dayjs';
         :height="tableConfig.maxHeight"
         :row-class-name="tableConfig.rowClassName"
         style="width: 100%"
+        :show-overflow-tooltip="true"
         @filter-change="filterChange"
     >
         <el-table-column

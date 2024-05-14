@@ -57,7 +57,10 @@
     <Header
       @currentProject="loadProject"
     />
-    <el-container v-if="currentProject.id">
+    <el-container
+      v-if="currentProject.id"
+      class="container"
+    >
       <el-aside style="width:auto;">
         <el-menu
           :default-active="currentPath"
@@ -136,8 +139,18 @@
     background-color: #1067EE;
     color: white;
   }
+  
+  .container {
+    height: calc(100% - 60px);
+  }
+  .aside-menu
+
+  ::v-deep .el-main  {
+    padding: 10px !important;
+  }
+
   .main {
-    padding: 0px;
+    padding: 10px !important;
   }
 
   .nodata {

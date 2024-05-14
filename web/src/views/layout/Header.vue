@@ -6,6 +6,8 @@
     import avatar from '@/assets/image/avatar.png';
     import logo from '@/assets/image/logo.png';
     import {useProjectStore} from '@/stores/project';
+    import {localStorage} from '@/utils/localStorage';
+    import constData from '@/const/const';
     const ChangeProjectRef = ref(null);
     const projects = reactive([]);
     let currentProject = reactive({
@@ -22,13 +24,29 @@
       ChangeProjectRef.value && ChangeProjectRef.value.showDialog(currentProject);
     }
 
+    projectStore.$subscribe((mutation, state) => {
+      if (mutation.storeId === 'project') {
+        // 修改的是project
+        if (state.projectInfo.id) {
+          Object.assign(currentProject, state.projectInfo);
+        }
+      }
+    })
+
     onMounted(() => {
       projectApi.getProjects().then(res => {
         projects.push(...res.data);
         if (projects.length) {
-          Object.assign(currentProject, projects[0]);
+          let localId = localStorage.get(constData.ERSC_LOCAL_STORAGE_KEY);
+          if (localId) {
+            let obj = projects.find(item => item.id === + localId);
+            Object.assign(currentProject, obj);
+          } else {
+            Object.assign(currentProject, projects[0]);
+          }
           projectStore.updateCurrentProject(currentProject);
         } 
+        localStorage.set(constData.ERSC_LOCAL_STORAGE_KEY, currentProject.id);
         emits('currentProject', currentProject);
       })
     })
@@ -44,7 +62,7 @@
           <img style="width: 70px;height: 30px" :src="logo"/>
           <span v-if="currentProject.id"> ｜ </span>  
           <span v-if="currentProject.id" class="pro-name" @click="changeProject">
-             {{ currentProject.name }}
+             {{ currentProject.name }}({{ currentProject.version }})
             <el-icon><Switch /></el-icon>
           </span>
         </div>
@@ -74,6 +92,7 @@
       background-color: rgba(244, 244,244, .3);
       padding: 0 10px;
       border-radius: 2px;
+      font-size: 14px;
     }
     .el-icon {
       margin-left: 8px;

@@ -78,7 +78,7 @@
                 <el-button type="primary" size="small" @click="addProject">新增源码</el-button>
                 <AddProjectDialog
                     ref="AddProjectDialogRef"
-                    @refresh=""
+                    @refresh="refresh"
                 />
             </template>
             <template v-slot:name="scope">

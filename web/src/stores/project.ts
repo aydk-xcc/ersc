@@ -1,4 +1,6 @@
 import { defineStore } from "pinia";
+import { localStorage } from "@/utils/localStorage";
+import constData from '@/const/const';
 
 interface State {
     projectInfo: Project.Project | null
@@ -16,6 +18,7 @@ export const useProjectStore = defineStore('project', {
     actions: {
         updateCurrentProject(pro: Project.Project) {
             this.projectInfo = pro;
+            localStorage.set(constData.ERSC_LOCAL_STORAGE_KEY, pro.id);
         }
     }
 })

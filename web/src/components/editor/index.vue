@@ -17,32 +17,35 @@
                 value: '',
                 language: "javascript",
                 fixedOverflowWidgets: true,
-                fontFamily: "Arial",
+                fontFamily: "Menlo",
                 fontSize: 14,
-                readOnly: false,
-                tabSize: 8,
+                readOnly: true,
+                tabSize: 4,
                 insertSpaces: true,
                 overviewRulerLanes: 0,
                 wordWrap: 'on',
-                wordWrapColumn: 120,
+                automaticLayout: true,
+                glyphMargin: true,
+                scrollBeyondLastColumn: 0,
+                scrollBeyondLastLine: false,
+                renderWhitespace: 'all',
                 hover: {
                     above: true,
                     enabled: true
                 },
                 minimap: {
-                    enabled: false,
+                    enabled: true,
                     autohide: false,
                     size: 'fit',
                     scale: 1,
                     renderCharacters: false,
                 },
-
-                // scrollbar: {
-                //     verticalScrollbarSize: 5,
-                //     verticalSliderSize: 6,
-                //     useShadows: false,
-                //     scrollByPage: false
-                // }
+                scrollbar: {
+                    verticalScrollbarSize: 2,
+                    verticalSliderSize: 2,
+                    useShadows: false,
+                    scrollByPage: false
+                }
             });
             const model = editor.getModel();
             // 增加aciton
@@ -51,6 +54,17 @@
             // - Configuration for the Constrained Editor : Starts Here
             const constrainedInstance = constrainedEditor(monaco);
             constrainedInstance.initializeIn(editor);
+            var decorations = editor.createDecorationsCollection([
+                {
+                    range: new monaco.Range(3, 1, 3, 1),
+                    options: {
+                        isWholeLine: true,
+                        className: "myContentClass",
+                        glyphMarginClassName: "line-operate",
+                    },
+                },
+            ]);
+            console.log(decorations);
             // constrainedInstance.addRestrictionsTo(model, [{
             //     range: [1, 1, 3, 5], // Range of Function definition
             //     allowMultiline: false,
@@ -80,7 +94,7 @@
             // });
 
             // editor.onDidChangeCursorSelection((e: monaco.editor.IEditorSelectionChangeEvent) => {
-            //     console.log('onDidChangeCursorSelection', e.position);
+            //     console.log('onDidChangeCursorSelection', e);
             // });
 
             // editor.onDidChangeModel((e: monaco.editor.IModelChangedEvent) => {
@@ -108,45 +122,81 @@
     //     }
     // }
 
+
+
     function updateValue(content: string) {
         editor?.setValue(content);
-        console.log(monaco.editor.tokenize(content, 'javascript'));
+        // console.log(monaco.editor.tokenize(content, 'javascript'));
         console.log(parseAst(content));
         monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true);
         const model2 = monaco.editor.createModel(content, 'javascript');
         const languageService = monaco.languages.typescript.getJavaScriptWorker().then(worker => {
             worker(model2.uri).then(client => {
-                console.log(client, model2.uri.toString(), model2.getLineCount());
+                // console.log(client, model2.uri.toString(), model2.getLineCount());
                 // client.getScriptText(model2.uri.toString()).then(res => {
                 //     console.log('getScriptText', res);
                 // })
-                const decorations = [];
+                const decorations: any = [];
                 client.getNavigationTree(model2.uri.toString()).then(res => {
                     console.log('getNavigationTree', res);
-                    res.childItems.forEach(node => {
-                        if (['class', 'function'].includes(node.kind)) {
-                            let spans = node.spans[0];
-                            console.log('开始', model2.getPositionAt(spans.start));
-                            let start = model2.getPositionAt(spans.start);
-                            let end = model2.getPositionAt(spans.start + spans.length);
-                            console.log('结束', model2.getPositionAt(spans.start + spans.length));
-                            decorations.push({
-                                range: {
-                                    startLineNumber: start.lineNumber, // 函数所在的行号
-                                    startColumn: start.column,
-                                    endLineNumber: end.lineNumber,
-                                    endColumn: end.column
+                    // res.childItems.forEach(node => {
+                    //     if (['class', 'function'].includes(node.kind)) {
+                    //         let spans = node.spans[0];
+                    //         // console.log('开始', model2.getPositionAt(spans.start));
+                    //         let start = model2.getPositionAt(spans.start);
+                    //         let end = model2.getPositionAt(spans.start + spans.length);
+                    //         // console.log('结束', model2.getPositionAt(spans.start + spans.length));
+                    //         decorations.push({
+                    //             range: {
+                    //                 startLineNumber: start.lineNumber, // 函数所在的行号
+                    //                 startColumn: start.column,
+                    //                 endLineNumber: end.lineNumber,
+                    //                 endColumn: end.column
+                    //             },
+                    //             options: {
+                    //                 isWholeLine: true,
+                    //                 className: 'functionMarker', // 自定义类名
+                    //                 glyphMarginClassName: 'functionGlyph' // 自定义标志的类名
+                    //             }
+                    //         })
+                    //     }
+                    // });
+                    var decorations = editor?.createDecorationsCollection([
+                        {
+                            range: new monaco.Range(3, 1, 3, 2),
+                            options: {
+                                isWholeLine: true,
+                                className: "myContentClass",
+                                glyphMargin: {
+                                    position: 1,
                                 },
-                                options: {
-                                    isWholeLine: true,
-
-                                    className: 'functionMarker', // 自定义类名
-                                    glyphMarginClassName: 'functionGlyph' // 自定义标志的类名
+                                shouldFillLineOnLineBreak: false,
+                                glyphMarginClassName: "line-operate-un_read",
+                                glyphMarginHoverMessage: {
+                                    value: '未读'
                                 }
-                            })
-                        }
-                    });
-                    console.log(editor?.createDecorationsCollection(decorations));
+                            },
+                        },
+                        {
+                            range: new monaco.Range(7, 3, 7, model2.getLineMaxColumn(7)),
+                            options: {
+                            
+                                afterContentClassName: 'ine-operate-read',
+                                isWholeLine: true,
+                                className: "myContentClass",
+                                glyphMarginClassName: "line-operate-read",
+                            },
+                        },
+                        {
+                            range: new monaco.Range(9, 1, 11, 1),
+                            options: {
+                                isWholeLine: true,
+                                className: "myContentClass",
+                                glyphMarginClassName: "line-operate-reading",
+                            },
+                        },
+                    ]);
+                    console.log(decorations);
                 })
                 client.getSemanticDiagnostics(model2.uri.toString()).then(res => {
                     console.log('getSemanticDiagnostics', res);
@@ -160,6 +210,23 @@
                 });
             });
         });
+        // let arr = editor.createDecorationsCollection([
+        //         {
+        //             options: {
+        //                 isWholeLine: true,
+        //                 after: {
+        //                     content: '🚀' // 在右侧显示的内容，可以是HTML字符串
+        //                 }
+        //             },
+        //             range: {
+        //                 startColumn: 0,
+        //                 startLineNumber: 3,
+        //                 endLineNumber: 5,
+        //                 endColumn: 10
+        //             }
+        //         }
+        //     ]);
+        //     editor?.deltaDecorations([], arr);
     }
 
     defineExpose({
@@ -176,9 +243,37 @@
         height: 100%;
     }
     /* 自定义函数标志的样式 */
-    :deep .functionMarker {
+    :deep(.functionMarker) {
         background-color: #f0f0f0; /* 设置背景颜色 */
         color: black;
     /* 可以添加其他自定义样式 */
+    }
+
+    :deep(.line-operate-un_read) {
+        background: url(../../assets/image/un_read.png) no-repeat;
+        background-size: contain;
+        height: 14px !important;
+        width: 14px !important;
+        cursor: pointer;
+    }
+
+    :deep(.line-operate-read) {
+        background: url(../../assets/image/read.png) no-repeat;
+        background-size: contain;
+        height: 16px ;
+        width: 16px;
+        cursor: pointer;
+    }
+
+    :deep(.line-operate-reading) {
+        background: url(../../assets/image/reading.png) no-repeat;
+        background-size: contain;
+        height: 16px ;
+        width: 16px;
+        cursor: pointer;
+    }
+
+    :deep(.inlineClassName2) {
+        position: relative;
     }
 </style>
