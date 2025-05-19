@@ -1,0 +1,57 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #5A4DF8;
+    padding: 0 20px;
+    height: 40px;
+    color: white;
+
+    .left {
+        display: flex;
+        align-items: center;
+        flex-direction: row;
+    }
+
+    .right {
+        display: flex;
+        align-items: center;
+        flex-direction: row;
+    }
+
+    .logo {
+        width: 60px;
+        height: 30px;
+    }
+
+    .title {
+        display: flex;
+        flex-direction: row;
+        height: 40px;
+        align-items: center;
+        font-size: 16px;
+        font-weight: bold;
+    
+        span {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+    
+        .pro-name {
+            padding: 0 10px;
+            border-radius: 2px;
+            font-size: 16px;
+            font-weight: 500;
+        }
+    
+        .el-icon {
+            margin-left: 8px;
+            font-size: 14px;
+        }
+    }
+    
+    .message {
+        font-size: 14px;
+    }
+}
