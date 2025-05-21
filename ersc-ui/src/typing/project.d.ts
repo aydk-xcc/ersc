@@ -1,14 +1,17 @@
 declare namespace Project {
-    interface Project {
-        id?: number;
+    interface ProjectInfo {
         name: string;
-        all_rows?: number;
-        read_rows?: number;
-        version: string;
-        entry: string;
-        user_id?: number;
-        base_dir: string;
-        createdAt?: number;
-        updatedAt?: number;
+        version?: string;
+        types?: string[];
+        currentType?: string;
+    }
+
+    interface TreeNodeData {
+        name: string;
+        label: string;
+        type: string;
+        path: string;
+        ext: string;
+        children: TreeNodeData[];
     }
 }

@@ -6,10 +6,13 @@
 
     .code-left {
         height: 100%;
-        width: 200px;
+        width: 310px;
+        max-width: 310px;
+        flex-shrink: 0;
         display: flex;
         background-color: white;
         flex-direction: column;
+        border-right: 1px solid #f0f0f0;
         .code-left-header {
             height: 40px;
             display: flex;
@@ -17,5 +20,10 @@
             align-items: center;
             justify-content: center;
         }
+
+    }
+
+    .code-right {
+        width: calc(100% - 200px);
     }
 }

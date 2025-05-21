@@ -1,0 +1,35 @@
+.ant-tree-treenode {
+    &:hover {
+        background-color: rgba(0, 0, 0, 0.08);
+
+        .ant-tree-node-content-wrapper {
+            background-color: transparent;
+        }
+    }
+}
+
+.ant-tree {
+    margin: 0 8px;
+}
+
+.ant-tree, .ant-tree-list {
+    height: calc(100% - 30px);
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.ant-tree-node-content-wrapper {
+    display: flex;
+    width: 0;
+}
+
+.ant-tree-treenode-selected {
+    background-color: #e6f4ff;
+}
+
+.ant-tree-title {
+    flex: 1 1 0%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

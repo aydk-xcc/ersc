@@ -1,5 +1,3 @@
-import {cloneDeep} from 'lodash-es';
-
 export function dealUrlWithParams(url: string, params: Record<string, any>) {
     let tempParams = params;
     if (!url) {

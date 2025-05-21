@@ -9,7 +9,9 @@ export const fileUrl = {
 
 export const projectUrl = {
     projectsUrl: V1_API + 'projects',
-    singleProjectsUrl: V1_API + 'projects/:id'
+    projectVersionUrl: V1_API + 'projects/:name',
+    projectFileListUrl: V1_API + 'projects/:name/:version/:type',
+    projectFileUrl: V1_API + 'projects/:name/:version/:type/file'
 }
 
 export default {

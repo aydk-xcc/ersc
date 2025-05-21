@@ -1,23 +1,29 @@
 import * as monaco from 'monaco-editor';
 import './worker.js';
+import './editor.scss';
 import {clearDefaultContextMenu, addActions} from './option.js';
 import {parseAst} from '@/utils/resolveAst';
 import { useRef, useEffect } from 'react';
 
-export default function Editor() {
+export default function Editor({codeInfo}: {codeInfo: string}) {
     const editorRef = useRef<HTMLDivElement | null>(null);
-    let editor:monaco.editor.IStandaloneCodeEditor|null = null;
+    const editor = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
     useEffect(() => {
-        if (editorRef.current && !editor) {
+        if (codeInfo) {
+            updateValue(codeInfo);
+        }
+    }, [codeInfo]);
+    useEffect(() => {
+        if (editorRef.current && !editor.current) {
             // 清理默认右键菜单
             clearDefaultContextMenu();
-            editor = monaco.editor.create(editorRef.current, {
+            editor.current = monaco.editor.create(editorRef.current, {
                 value: '',
                 language: "javascript",
                 fixedOverflowWidgets: true,
                 fontFamily: "Menlo",
                 fontSize: 14,
-                readOnly: true,
+                readOnly: false,
                 tabSize: 4,
                 insertSpaces: true,
                 overviewRulerLanes: 0,
@@ -45,14 +51,14 @@ export default function Editor() {
                     scrollByPage: false
                 }
             });
-            const model = editor.getModel();
+            const model = editor.current.getModel();
             // 增加aciton
-            addActions(editor);
+            addActions(editor.current);
 
             // - Configuration for the Constrained Editor : Starts Here
             // const constrainedInstance = constrainedEditor(monaco);
             // constrainedInstance.initializeIn(editor);
-            var decorations = editor.createDecorationsCollection([
+            var decorations = editor.current.createDecorationsCollection([
                 {
                     range: new monaco.Range(3, 1, 3, 1),
                     options: {
@@ -110,24 +116,26 @@ export default function Editor() {
             // monaco.Position.compare(p1, p2);
             // console.log(monaco.Position.compare(p1, p2))
             // console.log()
+            console.log(editor.current);
         }
     }, []);
     function updateValue(content: string) {
-        editor?.setValue(content);
+        console.log(editor.current, content);
+        editor.current?.setValue(content);
         // console.log(monaco.editor.tokenize(content, 'javascript'));
-        console.log(parseAst(content));
-        monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true);
-        const model2 = monaco.editor.createModel(content, 'javascript');
-        const languageService = monaco.languages.typescript.getJavaScriptWorker().then(worker => {
-            worker(model2.uri).then(client => {
+        // console.log(parseAst(content));
+        // monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true);
+        // const model2 = monaco.editor.createModel(content, 'javascript');
+        // const languageService = monaco.languages.typescript.getJavaScriptWorker().then(worker => {
+            // worker(model2.uri).then(client => {
                 // console.log(client, model2.uri.toString(), model2.getLineCount());
                 // client.getScriptText(model2.uri.toString()).then(res => {
                 //     console.log('getScriptText', res);
                 // })
-                const decorations: any = [];
-                client.getNavigationTree(model2.uri.toString()).then(res => {
-                    console.log('getNavigationTree', res);
-                    // res.childItems.forEach(node => {
+                // const decorations: any = [];
+                // client.getNavigationTree(model2.uri.toString()).then(res => {
+                //     console.log('getNavigationTree', res);
+                //     // res.childItems.forEach(node => {
                     //     if (['class', 'function'].includes(node.kind)) {
                     //         let spans = node.spans[0];
                     //         // console.log('开始', model2.getPositionAt(spans.start));
@@ -149,55 +157,55 @@ export default function Editor() {
                     //         })
                     //     }
                     // });
-                    var decorations = editor?.createDecorationsCollection([
-                        {
-                            range: new monaco.Range(3, 1, 3, 2),
-                            options: {
-                                isWholeLine: true,
-                                className: "myContentClass",
-                                glyphMargin: {
-                                    position: 1,
-                                },
-                                shouldFillLineOnLineBreak: false,
-                                glyphMarginClassName: "line-operate-un_read",
-                                glyphMarginHoverMessage: {
-                                    value: '未读'
-                                }
-                            },
-                        },
-                        {
-                            range: new monaco.Range(7, 3, 7, model2.getLineMaxColumn(7)),
-                            options: {
+            //         var decorations = editor?.createDecorationsCollection([
+            //             {
+            //                 range: new monaco.Range(3, 1, 3, 2),
+            //                 options: {
+            //                     isWholeLine: true,
+            //                     className: "myContentClass",
+            //                     glyphMargin: {
+            //                         position: 1,
+            //                     },
+            //                     shouldFillLineOnLineBreak: false,
+            //                     glyphMarginClassName: "line-operate-un_read",
+            //                     glyphMarginHoverMessage: {
+            //                         value: '未读'
+            //                     }
+            //                 },
+            //             },
+            //             {
+            //                 range: new monaco.Range(7, 3, 7, model2.getLineMaxColumn(7)),
+            //                 options: {
                             
-                                afterContentClassName: 'ine-operate-read',
-                                isWholeLine: true,
-                                className: "myContentClass",
-                                glyphMarginClassName: "line-operate-read",
-                            },
-                        },
-                        {
-                            range: new monaco.Range(9, 1, 11, 1),
-                            options: {
-                                isWholeLine: true,
-                                className: "myContentClass",
-                                glyphMarginClassName: "line-operate-reading",
-                            },
-                        },
-                    ]);
-                    console.log(decorations);
-                })
-                client.getSemanticDiagnostics(model2.uri.toString()).then(res => {
-                    console.log('getSemanticDiagnostics', res);
-                });
-                client.getSuggestionDiagnostics(model2.uri.toString()).then(res => {
-                    console.log('getSuggestionDiagnostics', res);
-                });
+            //                     afterContentClassName: 'ine-operate-read',
+            //                     isWholeLine: true,
+            //                     className: "myContentClass",
+            //                     glyphMarginClassName: "line-operate-read",
+            //                 },
+            //             },
+            //             {
+            //                 range: new monaco.Range(9, 1, 11, 1),
+            //                 options: {
+            //                     isWholeLine: true,
+            //                     className: "myContentClass",
+            //                     glyphMarginClassName: "line-operate-reading",
+            //                 },
+            //             },
+            //         ]);
+            //         console.log(decorations);
+            //     })
+            //     client.getSemanticDiagnostics(model2.uri.toString()).then(res => {
+            //         console.log('getSemanticDiagnostics', res);
+            //     });
+            //     client.getSuggestionDiagnostics(model2.uri.toString()).then(res => {
+            //         console.log('getSuggestionDiagnostics', res);
+            //     });
 
-                client.getSyntacticDiagnostics(model2.uri.toString()).then(res => {
-                    console.log('getSyntacticDiagnostics', res);
-                });
-            });
-        });
+            //     client.getSyntacticDiagnostics(model2.uri.toString()).then(res => {
+            //         console.log('getSyntacticDiagnostics', res);
+            //     });
+            // });
+        // });
         // let arr = editor.createDecorationsCollection([
         //         {
         //             options: {

@@ -1,23 +1,7 @@
-
-export function filterSameFile(files) {
-    // .mjs, cjs.js
-    return files.filter(file => {
-        if (file.endsWith('.mjs') || file.endsWith('.cjs.js')) {
-            let name = file.replace(/(.mjs)|(.cjs.js)/, '');
-            return !files.includes(name + '.js');
-        }
-        return true;
-    });
+export function getFileExt(fileName: string) {
+    return fileName.split('.').pop() || '';
 }
 
-export function getVersionByPackageJson(str: string) {
-    if (!str) {
-        return '';
-    }
-    try {
-        let obj = JSON.parse(str);
-        return obj.version || '';
-    } catch(e) {
-        return '';
-    }
+export function isDir(filePath: string) {
+    return filePath.endsWith('/');
 }
