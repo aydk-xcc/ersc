@@ -1,9 +1,9 @@
 declare namespace Project {
     interface ProjectInfo {
         name: string;
-        version?: string;
-        types?: string[];
-        currentType?: string;
+        version: string;
+        types: string[];
+        currentType: string;
     }
 
     interface TreeNodeData {

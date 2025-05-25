@@ -1,0 +1,164 @@
+.ai-chat-container {
+    height: 100%;
+    max-width: 480px;
+    min-width: 320px;
+    background: #f5f5f5;
+    
+    .cs-main-container {
+      height: 100%;
+    }
+    
+    .cs-chat-container {
+      height: 100%;
+    }
+    
+    .cs-message-list {
+      background: #ffffff;
+      padding: 1rem;
+    }
+    
+    .cs-message {
+      margin-bottom: 1rem;
+      
+      &.cs-message--incoming {
+        .cs-message__content {
+          background: #f0f0f0;
+          color: #333;
+          border-radius: 18px 18px 18px 4px;
+        }
+      }
+      
+      &.cs-message--outgoing {
+        .cs-message__content {
+          background: #007bff;
+          color: white;
+          border-radius: 18px 18px 4px 18px;
+        }
+      }
+    }
+    
+    .typewriter-message {
+      font-size: 14px;
+      line-height: 1.4;
+      color: #333;
+      
+      .Typewriter__wrapper {
+        display: inline;
+      }
+      
+      .Typewriter__cursor {
+        display: none;
+      }
+    }
+    
+    .cs-typing-indicator {
+      margin: 1rem 0;
+      
+      .cs-typing-indicator__content {
+        color: #666;
+        font-style: italic;
+      }
+    }
+    
+    .cs-message-input {
+      border-top: 1px solid #e0e0e0;
+      background: white;
+      padding: 1rem;
+      
+      .cs-text-input {
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        padding: 0.75rem 1rem;
+        font-size: 14px;
+        
+        &:focus {
+          outline: none;
+          border-color: #007bff;
+          box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+      }
+      
+      .cs-button {
+        background: #007bff;
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        margin-left: 0.5rem;
+        
+        &:hover {
+          background: #0056b3;
+        }
+        
+        &:disabled {
+          background: #ccc;
+          cursor: not-allowed;
+        }
+      }
+    }
+    
+    .cs-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      margin-right: 0.5rem;
+    }
+  }
+  
+  // 响应式设计
+  @media (max-width: 768px) {
+    .ai-chat-container {
+      .cs-message-list {
+        padding: 0.5rem;
+      }
+      
+      .cs-message {
+        margin-bottom: 0.5rem;
+      }
+      
+      .cs-message-input {
+        padding: 0.5rem;
+      }
+    }
+  }
+  
+  // 深色主题支持
+  .ai-chat-container.dark-theme {
+    background: #1a1a1a;
+    
+    .cs-message-list {
+      background: #2d2d2d;
+    }
+    
+    .cs-message {
+      &.cs-message--incoming {
+        .cs-message__content {
+          background: #404040;
+          color: #fff;
+        }
+      }
+    }
+    
+    .typewriter-message {
+      color: #fff;
+    }
+    
+    .cs-message-input {
+      background: #2d2d2d;
+      border-top-color: #404040;
+      
+      .cs-text-input {
+        background: #404040;
+        border-color: #555;
+        color: #fff;
+        
+        &::placeholder {
+          color: #aaa;
+        }
+        
+        &:focus {
+          border-color: #007bff;
+        }
+      }
+    }
+  }

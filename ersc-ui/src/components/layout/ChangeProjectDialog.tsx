@@ -18,11 +18,37 @@ interface ChangeProjectDialogProps {
 }
 
 export default function ChangeProjectDialog({ visible, onClose, onSelect }: ChangeProjectDialogProps) {
+    const [form] = Form.useForm();
     const [projects, setProjects] = useState<Project[]>([]);
     const [versions, setVersions] = useState<Project[]>([]);
     const [loading, setLoading] = useState(false);
-    const [currentProject, setCurrentProject] = useState<Project | null>(useAppSelector(selectCurrentProject));
+    const currentProjectSlice = useAppSelector(selectCurrentProject);
+    const [currentProject, setCurrentProject] = useState<Project | null>(() => {
+        if (currentProjectSlice) {
+            return currentProjectSlice;
+        }
+        return null;
+    });
     const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        if (currentProject) {
+            form.setFieldsValue({
+                project: currentProject.name,
+                version: currentProject.version,
+                type: currentProject.currentType
+            });
+        } else {
+            form.resetFields();
+        }
+    }, [currentProject, form]);
+
+    useEffect(() => {
+        if (visible && currentProjectSlice) {
+            setCurrentProject(currentProjectSlice);
+        }
+    }, [visible, currentProjectSlice]);
+
     useEffect(() => {
         if (visible) {
             setLoading(true);
@@ -54,9 +80,15 @@ export default function ChangeProjectDialog({ visible, onClose, onSelect }: Chan
     }, [currentProject?.name]);
 
     const handleOk = () => {
-        if (currentProject) {
+        if (currentProject && currentProject.name && currentProject.version && currentProject.currentType) {
+            const projectInfo = {
+                name: currentProject.name,
+                version: currentProject.version,
+                currentType: currentProject.currentType,
+                types: currentProject.types || []
+            };
             onSelect?.(currentProject);
-            dispatch(updateCurrentProject(currentProject));
+            dispatch(updateCurrentProject(projectInfo));
         }
         onClose();
     };
@@ -74,7 +106,9 @@ export default function ChangeProjectDialog({ visible, onClose, onSelect }: Chan
         if (selected) {
             setCurrentProject({
                 name: selected.name,
-                ...currentProject
+                version: '',
+                types: [],
+                currentType: ''
             });
         }
     }
@@ -89,6 +123,7 @@ export default function ChangeProjectDialog({ visible, onClose, onSelect }: Chan
             confirmLoading={loading}
         >
             <Form
+                form={form}
                 name="basic"
                 labelCol={{ span: 4 }}
                 wrapperCol={{ span: 16 }}
@@ -102,7 +137,6 @@ export default function ChangeProjectDialog({ visible, onClose, onSelect }: Chan
                     rules={[{ required: true, message: '请选择代码库' }]}
                 >
                     <Select
-                        value={currentProject?.name}
                         style={{ width: '100%' }}
                         loading={loading}
                         placeholder="请选择代码库"
@@ -129,7 +163,6 @@ export default function ChangeProjectDialog({ visible, onClose, onSelect }: Chan
                     rules={[{ required: true, message: '请选择版本' }]}
                 >
                     <Select
-                        value={currentProject?.version}
                         style={{ width: '100%' }}
                         loading={loading}
                         placeholder="请选择版本"
@@ -162,6 +195,40 @@ export default function ChangeProjectDialog({ visible, onClose, onSelect }: Chan
                                 version: value,
                                 types: versionInfo?.types || [],
                                 currentType: versionInfo?.types?.[0] || ''
+                            });
+                        }}
+                    />
+                </Form.Item>
+
+                <Form.Item
+                    label="类型"
+                    name="type"
+                    rules={[{ required: true, message: '请选择类型' }]}
+                >
+                    <Select
+                        style={{ width: '100%' }}
+                        loading={loading}
+                        placeholder="请选择类型"
+                        allowClear
+                        showSearch
+                        filterOption={(input, option) => {
+                            if (!option) return false;
+                            const label = option.label?.toString().toLowerCase() || '';
+                            const value = option.value?.toString().toLowerCase() || '';
+                            const searchText = input.toLowerCase();
+                            return label.includes(searchText) || value.includes(searchText);
+                        }}
+                        options={(currentProject?.types || []).map(type => ({
+                            label: type,
+                            value: type
+                        }))}
+                        onChange={value => {
+                            setCurrentProject({
+                                ...currentProject,
+                                name: currentProject?.name || '',
+                                version: currentProject?.version || '',
+                                types: currentProject?.types || [],
+                                currentType: value || ''
                             });
                         }}
                     />

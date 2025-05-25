@@ -5,25 +5,78 @@ import {clearDefaultContextMenu, addActions} from './option.js';
 import {parseAst} from '@/utils/resolveAst';
 import { useRef, useEffect } from 'react';
 
-export default function Editor({codeInfo}: {codeInfo: string}) {
+export default function Editor({codeInfo, filePath}: {codeInfo: string, filePath?: string}) {
     const editorRef = useRef<HTMLDivElement | null>(null);
     const editor = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
-    useEffect(() => {
-        if (codeInfo) {
-            updateValue(codeInfo);
+    
+    // 根据文件路径或内容检测语言
+    const detectLanguage = (content: string, path?: string): string => {
+        if (path) {
+            const ext = path.split('.').pop()?.toLowerCase();
+            switch (ext) {
+                case 'md':
+                case 'markdown':
+                    return 'markdown';
+                case 'js':
+                    return 'javascript';
+                case 'ts':
+                    return 'typescript';
+                case 'tsx':
+                    return 'typescript';
+                case 'jsx':
+                    return 'javascript';
+                case 'json':
+                    return 'json';
+                case 'css':
+                    return 'css';
+                case 'scss':
+                    return 'scss';
+                case 'html':
+                    return 'html';
+                case 'py':
+                    return 'python';
+                case 'java':
+                    return 'java';
+                case 'go':
+                    return 'go';
+                case 'rs':
+                    return 'rust';
+                case 'vue':
+                    return 'html'; // Vue文件可以用html模式
+                default:
+                    return 'plaintext';
+            }
         }
-    }, [codeInfo]);
+        
+        // 如果没有路径，根据内容判断
+        if (content.startsWith('#') || content.includes('##') || content.includes('```')) {
+            return 'markdown';
+        }
+        
+        return 'javascript'; // 默认
+    };
+
+    useEffect(() => {
+        if (codeInfo && editor.current) {
+            const language = detectLanguage(codeInfo, filePath);
+            console.log('Setting editor language to:', language);
+            console.log('Content:', codeInfo.substring(0, 100) + '...');
+            updateValue(codeInfo, language);
+        }
+    }, [codeInfo, filePath]);
+
     useEffect(() => {
         if (editorRef.current && !editor.current) {
             // 清理默认右键菜单
             clearDefaultContextMenu();
+            const language = detectLanguage(codeInfo || '', filePath);
             editor.current = monaco.editor.create(editorRef.current, {
-                value: '',
-                language: "javascript",
+                value: codeInfo || '',
+                language: language,
                 fixedOverflowWidgets: true,
                 fontFamily: "Menlo",
                 fontSize: 14,
-                readOnly: false,
+                readOnly: true,
                 tabSize: 4,
                 insertSpaces: true,
                 overviewRulerLanes: 0,
@@ -38,7 +91,7 @@ export default function Editor({codeInfo}: {codeInfo: string}) {
                     enabled: true
                 },
                 minimap: {
-                    enabled: true,
+                    enabled: false,
                     autohide: false,
                     size: 'fit',
                     scale: 1,
@@ -119,9 +172,19 @@ export default function Editor({codeInfo}: {codeInfo: string}) {
             console.log(editor.current);
         }
     }, []);
-    function updateValue(content: string) {
-        console.log(editor.current, content);
-        editor.current?.setValue(content);
+    function updateValue(content: string, language?: string) {
+        console.log('updateValue called with:', { content: content.substring(0, 50) + '...', language });
+        if (editor.current) {
+            editor.current.setValue(content);
+            
+            // 设置语言模式
+            if (language) {
+                const model = editor.current.getModel();
+                if (model) {
+                    monaco.editor.setModelLanguage(model, language);
+                }
+            }
+        }
         // console.log(monaco.editor.tokenize(content, 'javascript'));
         // console.log(parseAst(content));
         // monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true);

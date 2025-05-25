@@ -18,12 +18,48 @@
             display: flex;
             flex-direction: row;
             align-items: center;
-            justify-content: center;
+            justify-content: space-around;
+            align-items: center;
+            padding: 0 60px;
+
+            span {
+                cursor: pointer;
+                display: inline-block;
+                width: 30px;
+                height: 30px;
+                text-align: center;
+                line-height: 30px;
+                &.active {
+                    color: #1890ff;
+                    background: #f0f0f0;
+                }
+            }
         }
 
     }
 
     .code-right {
         width: calc(100% - 200px);
+        overflow: hidden;
+
+        .ant-tabs {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+
+            .ant-tabs-nav {
+                margin-bottom: 0;
+            }
+        }
+
+        .ant-tabs-content {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+
+            .ant-tabs-tabpane {
+                height: 100%;
+            }
+        }
     }
 }

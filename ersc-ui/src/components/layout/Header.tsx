@@ -1,20 +1,34 @@
-import { Layout, Avatar, Select } from "antd";
+import { Layout, Avatar, Select, Tooltip } from "antd";
 import './header.scss';
 import avatar from '@/assets/image/avatar.png';
 import logo from '@/assets/image/logo.png';
+import { OpenAIOutlined } from '@ant-design/icons';
 import { useState } from "react";
 import { SwapOutlined } from '@ant-design/icons';
 import ChangeProjectDialog from './ChangeProjectDialog';
+import { useAppSelector, useAppDispatch } from '@/stores/hooks';
+import { selectCurrentProject } from '@/stores/projectSlice';
+import { selectChatVisible, setChatVisible } from '@/stores/chatSlice';
+import logoAvatar from '@/assets/image/logo.png';
+import userAvatar from '@/assets/image/avatar.png';
 
 const { Header } = Layout;
 
 
 export default function PlHeader() {
-    const [currentProject, setCurrentProject] = useState<Project.ProjectInfo>({
-        name: '',
-        version: '',
-        types: [],
-        currentType: ''
+    const currentProjectSlice = useAppSelector(selectCurrentProject);
+    const chatVisible = useAppSelector(selectChatVisible);
+    const dispatch = useAppDispatch();
+    const [currentProject, setCurrentProject] = useState<Project.ProjectInfo>(() => {
+        if (currentProjectSlice) {
+            return currentProjectSlice;
+        }
+        return {
+            name: '',
+            version: '',
+            types: [],
+            currentType: ''
+        }
     });
     const [dialogVisible, setDialogVisible] = useState(false);
 
@@ -71,7 +85,23 @@ export default function PlHeader() {
                             />}
                     </div>
                 </div>
+
                 <div className="right">
+                    <Tooltip 
+                        placement="bottom" 
+                        title={chatVisible ? '关闭AI Chat' : '打开AI Chat'}
+                    >
+                        <OpenAIOutlined
+                            className="openai-icon"
+                            style={{
+                                fontSize: '24px',
+                                cursor: 'pointer'
+                            }}
+                            onClick={() => {
+                                dispatch(setChatVisible(!chatVisible));
+                            }}
+                        />
+                    </Tooltip>
                     <Avatar shape="square" size={35} src={avatar} />
                 </div>
             </Header>

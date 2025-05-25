@@ -21,7 +21,7 @@ export default function PlLayout() {
         <Layout className='layout'>
             <PlHeader />
             <Layout>
-            <Sider
+            {/* <Sider
                 className='sider'
                 width="180px"
                 theme='light'
@@ -33,7 +33,7 @@ export default function PlLayout() {
                     mode="inline" items={items} 
                     onClick={(key) => handleClick(key.key)}
                 />
-            </Sider>
+            </Sider> */}
             <Content>
                 <Outlet />
             </Content>

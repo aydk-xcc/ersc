@@ -39,7 +39,13 @@ function sortTreeData(treeData: Array<TreeDataNode>) {
         } else {
             let lowerA = (a.key as string).toLowerCase();
             let lowerB = (b.key as string).toLowerCase();
-            return lowerA.localeCompare(lowerB);
+            let extA = lowerA.split('.').pop();
+            let extB = lowerB.split('.').pop();
+            if (extA && extB) {
+                return extA.localeCompare(extB);
+            } else {
+                return lowerA.localeCompare(lowerB);
+            }
         }
     });
     treeData.forEach(item => {
