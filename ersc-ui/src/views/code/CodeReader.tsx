@@ -7,7 +7,6 @@ import { selectCurrentProject } from '@/stores/projectSlice';
 import projectApi from '@/api/projectApi';
 import { Tabs } from 'antd';
 import { DEFAULT_MD_CONTENT } from './defaultContent';
-import Chat from './Chat';
 import AIChat from '@/components/chat/AIChat';
 import { selectChatVisible } from '@/stores/chatSlice';
 

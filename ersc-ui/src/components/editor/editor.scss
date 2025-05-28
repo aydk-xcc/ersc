@@ -3,3 +3,68 @@
     height: 100%;
     background-color: #f0f0f0;
 }
+
+// 自定义悬浮提示样式
+.monaco-hover {
+    .monaco-hover-content {
+        max-width: 400px !important;
+        
+        .markdown-string {
+            padding: 8px 12px;
+            
+            h1, h2, h3, h4, h5, h6 {
+                margin: 4px 0;
+                color: #1f2937;
+            }
+            
+            p {
+                margin: 4px 0;
+                line-height: 1.5;
+            }
+            
+            code {
+                background: #f3f4f6;
+                padding: 2px 4px;
+                border-radius: 3px;
+                font-family: 'Monaco', 'Menlo', monospace;
+                color: #e11d48;
+            }
+            
+            strong {
+                color: #1f2937;
+                font-weight: 600;
+            }
+        }
+    }
+    
+    // 悬浮框边框和阴影
+    border: 1px solid #e5e7eb !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+    border-radius: 6px !important;
+    background: white !important;
+}
+
+// 深色主题下的悬浮提示
+.vs-dark .monaco-hover {
+    background: #374151 !important;
+    border-color: #4b5563 !important;
+    
+    .monaco-hover-content .markdown-string {
+        h1, h2, h3, h4, h5, h6 {
+            color: #f9fafb;
+        }
+        
+        p {
+            color: #d1d5db;
+        }
+        
+        code {
+            background: #4b5563;
+            color: #fbbf24;
+        }
+        
+        strong {
+            color: #f9fafb;
+        }
+    }
+}

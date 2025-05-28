@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
-import { Tree, Spin } from 'antd';
+import { Tree, Spin, Popover } from 'antd';
 import type { TreeDataNode, TreeProps } from 'antd';
 import type { Key } from 'react';
 import './slider.scss';
+import FileSearch from './component/FileSearch';
 import { 
     SearchOutlined, 
     ChromeOutlined, 
@@ -15,7 +16,7 @@ import { useAppSelector } from '@/stores/hooks';
 import { selectCurrentProject } from '@/stores/projectSlice';
 import projectApi from '@/api/projectApi';
 import { getTreeData } from './treeData';
-import { isDir, getFileExt } from '@/utils/file';
+import { isDir, getFileExt, getFileIcon } from '@/utils/file';
 
 
 export default function CodeSlider({onFileChange}: {onFileChange: (path: string) => void}) {
@@ -26,8 +27,10 @@ export default function CodeSlider({onFileChange}: {onFileChange: (path: string)
     const [loading, setLoading] = useState(false);
     const state = useRef(false);
     const [currentTab, setCurrentTab] = useState('files');
+    const [fileList, setFileList] = useState<Array<Project.FileItem>>([]);
     
     useEffect(() => {
+        console.log(currentProject);
         if (currentProject) {
             setLoading(true);
             setSelectedKeys([]);
@@ -36,9 +39,10 @@ export default function CodeSlider({onFileChange}: {onFileChange: (path: string)
             state.current = false;
             projectApi.getProjectFileList(currentProject.name, currentProject.version || '', currentProject.currentType)
                 .then(res => {
-                    let newTreeData = getTreeData(res.data.sort());
-                    setTreeData(newTreeData);
-                    console.log('Tree data loaded:', newTreeData);
+                    let { treeData, fileList } = getTreeData(res.data.sort());
+                    setTreeData(treeData);
+                    setFileList(fileList);
+                    console.log('Tree data loaded:', treeData);
                     state.current = true;
                 })
                 .catch(err => {
@@ -84,7 +88,7 @@ export default function CodeSlider({onFileChange}: {onFileChange: (path: string)
         if (node && isDir(node.key as string)) {
             return <PlIcon type={expanded ? 'vs-folder-line' : 'vs-folder'} />;
         } else if (node) {
-            return <PlIcon type={`vs-${getFileExt(node.key as string)}`} />;
+            return <PlIcon type={getFileIcon(node.key as string)} />;
         }
         return null;
     }
@@ -110,10 +114,18 @@ export default function CodeSlider({onFileChange}: {onFileChange: (path: string)
                     className={`${currentTab === 'files' ? 'active' : ''}`}
                     onClick={() => setCurrentTab('files')}
                 />
-                <SearchOutlined
-                    className={`${currentTab === 'search' ? 'active' : ''}`}
-                    onClick={() => setCurrentTab('search')}
-                />
+                <Popover 
+                    trigger="click"
+                    arrow={false}
+                    content={<FileSearch
+                        fileList={fileList}
+                    />}
+                >
+                    <SearchOutlined
+                        className={`${currentTab === 'search' ? 'active' : ''}`}
+                        onClick={() => setCurrentTab('search')}
+                    />
+                </Popover>
                 <BranchesOutlined
                     className={`${currentTab === 'branches' ? 'active' : ''}`}
                     onClick={() => setCurrentTab('branches')}

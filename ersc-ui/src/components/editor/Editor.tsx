@@ -4,6 +4,7 @@ import './editor.scss';
 import {clearDefaultContextMenu, addActions} from './option.js';
 import {parseAst} from '@/utils/resolveAst';
 import { useRef, useEffect } from 'react';
+import { registerCustomHoverProvider } from './customHoverProvide';
 
 export default function Editor({codeInfo, filePath}: {codeInfo: string, filePath?: string}) {
     const editorRef = useRef<HTMLDivElement | null>(null);
@@ -88,7 +89,9 @@ export default function Editor({codeInfo, filePath}: {codeInfo: string, filePath
                 renderWhitespace: 'all',
                 hover: {
                     above: true,
-                    enabled: true
+                    enabled: true,
+                    delay: 300, // 悬浮延迟时间
+                    sticky: true // 悬浮框是否可以被鼠标悬浮
                 },
                 minimap: {
                     enabled: false,
@@ -105,6 +108,10 @@ export default function Editor({codeInfo, filePath}: {codeInfo: string, filePath
                 }
             });
             const model = editor.current.getModel();
+            
+            // 注册自定义悬浮提示提供者
+            registerCustomHoverProvider(language);
+            
             // 增加aciton
             addActions(editor.current);
 
@@ -287,6 +294,7 @@ export default function Editor({codeInfo, filePath}: {codeInfo: string, filePath
         //     ]);
         //     editor?.deltaDecorations([], arr);
     }
+
     return (
         <div className="editor" ref={editorRef} />
     )

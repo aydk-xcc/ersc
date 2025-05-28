@@ -14,4 +14,9 @@ declare namespace Project {
         ext: string;
         children: TreeNodeData[];
     }
+
+    interface FileItem {
+        key: string; // path
+        name: string;
+    }
 }

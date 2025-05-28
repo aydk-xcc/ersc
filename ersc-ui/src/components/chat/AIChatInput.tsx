@@ -8,17 +8,13 @@ interface MentionItem {
     path: string;
     name: string;
     origin: any;
+    type?: string;
 }
 
 export default function AIChatInput() {
     const [inputValue, setInputValue] = useState('');
     const [selectedModel, setSelectedModel] = useState('claude-4-sonnet');
-    const [selectedAgent, setSelectedAgent] = useState('default');
-    const [mentions, setMentions] = useState<MentionItem[]>([{
-        name: 'Header.tsx',
-        path: 'src/components/Header.tsx',
-        origin: {}
-    }]);
+    const [mentions, setMentions] = useState<MentionItem[]>([]);
 
     // 模型选项
     const modelList: MenuProps['items'] = [
@@ -28,11 +24,11 @@ export default function AIChatInput() {
         { key: 'gemini-pro', label: 'Gemini Pro', icon: '💎' },
     ];
 
-    const removeMention = (mentionId: string) => {
-        setMentions(mentions.filter(m => m.id !== mentionId));
+    const removeMention = (index: number) => {
+        setMentions(mentions.filter((_, i) => i !== index));
     };
 
-    const getMentionColor = (type: string) => {
+    const getMentionColor = (type?: string) => {
         switch (type) {
             case 'file': return 'blue';
             case 'function': return 'green';
@@ -41,16 +37,27 @@ export default function AIChatInput() {
         }
     };
 
+    const handleMentionClick = (mention: MentionItem) => {
+        console.log('点击提及项:', mention);
+        // 这里可以添加点击提及项的逻辑，比如跳转到文件等
+    };
+
     return (
         <div className="ai-chat-input">
             <div className="ai-chat-mention">
-                {mentions.map(mention => (
-                    <Tag key={mention.id} color={getMentionColor(mention.type)} closable onClose={() => removeMention(mention.id)}>
+                {mentions.map((mention, index) => (
+                    <Tag 
+                        key={index} 
+                        color={getMentionColor(mention.type)} 
+                        onClose={() => removeMention(index)}
+                        onClick={() => handleMentionClick(mention)}
+                    >
                         {mention.name}
                     </Tag>
                 ))}
             </div>
             <Input.TextArea
+                value={inputValue}
                 className="ai-chat-input-textarea"
                 placeholder="请输入问题"
                 autoSize={{ minRows: 2, maxRows: 6 }}
@@ -63,7 +70,7 @@ export default function AIChatInput() {
                         onClick={(e) => e.preventDefault()}
                     >
                         <Space>
-                            Hover me
+                            {selectedModel}
                             <DownOutlined />
                         </Space>
                     </span>
