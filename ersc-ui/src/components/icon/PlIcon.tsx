@@ -1,9 +1,19 @@
 import React from 'react';
 import { createFromIconfontCN } from '@ant-design/icons';
+import { Tooltip } from 'antd';
 
-export default function PlIcon({type, style, className}: {type: string, style?: React.CSSProperties, className?: string}) {
+export default function PlIcon({type, title, style, className, onClick}: {type: string, title?: string, style?: React.CSSProperties, className?: string, onClick?: () => void}) {
     const IconFont = createFromIconfontCN({
-        scriptUrl: '//at.alicdn.com/t/c/font_4511939_c9w6w120mkq.js',
+        scriptUrl: '//at.alicdn.com/t/c/font_4511939_dfbxssbjw7o.js',
     });
-    return <IconFont type={type} style={style} className={className} />
+    return (
+        <Tooltip placement="topLeft" title={title} arrow={false}>
+            <IconFont 
+                type={type} 
+                style={style} 
+                className={className} 
+                onClick={onClick} 
+            />
+        </Tooltip>
+    );
 }

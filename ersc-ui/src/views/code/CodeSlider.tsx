@@ -16,24 +16,25 @@ import { useAppSelector } from '@/stores/hooks';
 import { selectCurrentProject } from '@/stores/projectSlice';
 import projectApi from '@/api/projectApi';
 import { getTreeData } from './treeData';
-import { isDir, getFileExt, getFileIcon } from '@/utils/file';
+import { isDir, getFileIcon } from '@/utils/file';
 
 
 export default function CodeSlider({onFileChange}: {onFileChange: (path: string) => void}) {
     const [expandedKeys, setExpandedKeys] = useState<Key[]>([]);
-    const [selectedKeys, setSelectedKeys] = useState<Key[]>([]);
     const [treeData, setTreeData] = useState<Array<TreeDataNode>>([]);
     const currentProject = useAppSelector(selectCurrentProject);
     const [loading, setLoading] = useState(false);
     const state = useRef(false);
     const [currentTab, setCurrentTab] = useState('files');
     const [fileList, setFileList] = useState<Array<Project.FileItem>>([]);
+    const [showSearch, setShowSearch] = useState(false);
+    const [selectedKeys, setSelectedKeys] = useState<Key[]>([]);
+    const treeRef = useRef(null);
     
     useEffect(() => {
         console.log(currentProject);
         if (currentProject) {
             setLoading(true);
-            setSelectedKeys([]);
             setExpandedKeys([]); // 先清空展开状态
             // 重置状态，允许重新加载
             state.current = false;
@@ -55,7 +56,6 @@ export default function CodeSlider({onFileChange}: {onFileChange: (path: string)
             // 如果没有选择项目，清空所有状态
             setTreeData([]);
             setExpandedKeys([]);
-            setSelectedKeys([]);
         }
     }, [currentProject]);
 
@@ -78,7 +78,6 @@ export default function CodeSlider({onFileChange}: {onFileChange: (path: string)
 
     // 处理展开/收起事件
     const onExpand = (expandedKeysValue: Key[]) => {
-        console.log('onExpand', expandedKeysValue);
         setExpandedKeys(expandedKeysValue);
     };
 
@@ -92,13 +91,30 @@ export default function CodeSlider({onFileChange}: {onFileChange: (path: string)
         }
         return null;
     }
+    function choseFile(file: Project.FileItem) {
+        setShowSearch(false);
+        setCurrentTab('files');
+        setExpandedKeys([file.key]);
+        setSelectedKeys([file.key]);
+        onFileChange(file.key);
+        treeRef.current?.scrollTo({
+            key: file.key,
+            align: 'top',
+            offset: 30
+        });
+    }
+
+    function onOpenChange(open: boolean) {
+        setShowSearch(open);
+        if (!open) {
+            setCurrentTab('files');
+        }
+    }
 
     function onSelect(selectedKeys: Key[], info: any) {
         const node = info.node as TreeDataNode;
-        if (!isDir(node.key as string)) {
-            setSelectedKeys(selectedKeys);
-            onFileChange(node.key as string);
-        }
+        setSelectedKeys(selectedKeys);
+        onFileChange(node.key as string);
     }
 
     return (
@@ -117,13 +133,19 @@ export default function CodeSlider({onFileChange}: {onFileChange: (path: string)
                 <Popover 
                     trigger="click"
                     arrow={false}
+                    open={showSearch}
+                    onOpenChange={onOpenChange}
                     content={<FileSearch
                         fileList={fileList}
+                        choseFile={choseFile}
                     />}
                 >
                     <SearchOutlined
                         className={`${currentTab === 'search' ? 'active' : ''}`}
-                        onClick={() => setCurrentTab('search')}
+                        onClick={() => {
+                            setCurrentTab('search');
+                            setShowSearch(!showSearch);
+                        }}
                     />
                 </Popover>
                 <BranchesOutlined
@@ -136,13 +158,15 @@ export default function CodeSlider({onFileChange}: {onFileChange: (path: string)
                 />
             </div>
             <Tree
+                ref={treeRef}
                 className="draggable-tree"
                 expandedKeys={expandedKeys}
-                onExpand={onExpand}
                 selectedKeys={selectedKeys}
+                onExpand={onExpand}
                 switcherIcon={<DownOutlined />}
                 showLine
                 blockNode
+                autoExpandParent={true}
                 showIcon
                 icon={renderIcon}
                 treeData={treeData}
