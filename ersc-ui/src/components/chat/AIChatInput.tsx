@@ -1,27 +1,28 @@
-import { Input, Dropdown, Tag, Space } from "antd";
+import { Input, Dropdown, Tag, Space, Button } from "antd";
 import { ArrowUpOutlined, DownOutlined } from "@ant-design/icons";
-import { useState, useRef } from "react";
+import { useState } from "react";
 import type { MenuProps } from 'antd';
-import './AIChatInput.scss';
+import './css/AIChatInput.scss';
+import PlIcon from "../icon/PlIcon";
+import { chatMessage } from "@/api/modelApi";
 
 interface MentionItem {
     path: string;
     name: string;
-    origin: any;
+    origin: string;
     type?: string;
 }
 
-export default function AIChatInput() {
+export default function AIChatInput({ onSubmit }: { onSubmit: (message: ModelMessage) => void }) {
     const [inputValue, setInputValue] = useState('');
-    const [selectedModel, setSelectedModel] = useState('claude-4-sonnet');
+    const [selectedModel, setSelectedModel] = useState('DeepSeek-Chat');
     const [mentions, setMentions] = useState<MentionItem[]>([]);
 
     // 模型选项
     const modelList: MenuProps['items'] = [
-        { key: 'claude-4-sonnet', label: 'Claude 4 Sonnet', icon: '🤖' },
-        { key: 'gpt-4', label: 'GPT-4', icon: '🧠' },
-        { key: 'gpt-3.5-turbo', label: 'GPT-3.5 Turbo', icon: '⚡' },
-        { key: 'gemini-pro', label: 'Gemini Pro', icon: '💎' },
+        { key: 'deepseek', label: 'DeepSeek-Chat', icon: <PlIcon type="vs-deepseek" /> },
+        { key: 'openai', label: 'OpenAI', disabled: true, icon: <PlIcon type="vs-openai" /> },
+        { key: 'kimi', label: 'Kimi', disabled: true, icon: <PlIcon type="vs-kimi" /> },
     ];
 
     const removeMention = (index: number) => {
@@ -40,6 +41,27 @@ export default function AIChatInput() {
     const handleMentionClick = (mention: MentionItem) => {
         console.log('点击提及项:', mention);
         // 这里可以添加点击提及项的逻辑，比如跳转到文件等
+    };
+
+    const handleSubmit = async () => {
+        console.log('提交');
+        onSubmit({
+            role: 'assistant',
+            content: inputValue
+        });
+        const messages = [
+            {
+                role: 'system',
+                content: '你是一个代码阅读器，请根据用户的问题，阅读代码，并给出回答。'
+            },
+            {
+                role: 'user',
+                content: inputValue
+            }
+        ];
+        const res = await chatMessage(messages, selectedModel);
+
+        console.log(res);
     };
 
     return (
@@ -61,6 +83,7 @@ export default function AIChatInput() {
                 className="ai-chat-input-textarea"
                 placeholder="请输入问题"
                 autoSize={{ minRows: 2, maxRows: 6 }}
+                onChange={(e) => setInputValue(e.target.value)}
             />
             <div className="ai-chat-input-footer">
                 <div>
@@ -77,7 +100,12 @@ export default function AIChatInput() {
                 </Dropdown>
                 </div>
                 <div>
-                    <ArrowUpOutlined
+                    <Button
+                        type="primary"
+                        shape="circle" 
+                        icon={<ArrowUpOutlined />} 
+                        disabled={!inputValue} 
+                        onClick={handleSubmit} 
                         className="ai-chat-input-submit"
                     />
                 </div>

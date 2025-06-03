@@ -2,6 +2,10 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProjectsModule } from './projects/projects.module';
+import { ModelsModule } from './models/models.module';
+import { UsersModule } from './users/users.module';
+import { ChatModule } from './chat/chat.module';
+import { ChatSessionModule } from './chat-session/chat-session.module';
 import { join } from 'path';
 
 @Module({
@@ -20,7 +24,11 @@ import { join } from 'path';
     }),
     
     // 业务模块
-    ProjectsModule
+    ProjectsModule,
+    ModelsModule,
+    UsersModule,
+    ChatModule,
+    ChatSessionModule,
   ],
 })
 export class AppModule {

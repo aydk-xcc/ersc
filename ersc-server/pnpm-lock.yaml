@@ -56,6 +56,9 @@ dependencies:
   formidable:
     specifier: ^3.5.1
     version: registry.npmmirror.com/formidable@3.5.1
+  openai:
+    specifier: ^5.0.1
+    version: registry.npmmirror.com/openai@5.0.1
   reflect-metadata:
     specifier: ^0.2.2
     version: registry.npmmirror.com/reflect-metadata@0.2.2
@@ -2874,6 +2877,21 @@ packages:
     version: 1.4.0
     dependencies:
       wrappy: registry.npmmirror.com/wrappy@1.0.2
+    dev: false
+
+  registry.npmmirror.com/openai@5.0.1:
+    resolution: {integrity: sha512-Do6vxhbDv7cXhji/4ct1lrpZYMAOmjYbhyA9LJTuG7OfpbWMpuS+EIXkRT7R+XxpRB1OZhU/op4FU3p3uxU6gw==, tarball: https://registry.npmmirror.com/openai/-/openai-5.0.1.tgz}
+    name: openai
+    version: 5.0.1
+    hasBin: true
+    peerDependencies:
+      ws: ^8.18.0
+      zod: ^3.23.8
+    peerDependenciesMeta:
+      ws:
+        optional: true
+      zod:
+        optional: true
     dev: false
 
   registry.npmmirror.com/p-map@4.0.0:

@@ -29,6 +29,9 @@ dependencies:
   body-parser:
     specifier: ^2.2.0
     version: 2.2.0
+  dayjs:
+    specifier: ^1.11.13
+    version: 1.11.13
   lodash-es:
     specifier: ^4.17.21
     version: 4.17.21

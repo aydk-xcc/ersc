@@ -19,6 +19,7 @@
     "antd": "^5.25.1",
     "axios": "^1.9.0",
     "body-parser": "^2.2.0",
+    "dayjs": "^1.11.13",
     "lodash-es": "^4.17.21",
     "mockjs": "^1.1.0",
     "monaco-editor": "^0.52.2",

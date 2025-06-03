@@ -14,7 +14,25 @@ export const projectUrl = {
     projectFileUrl: V1_API + 'projects/:name/:version/:type/file'
 }
 
+export const modelsUrl = {
+    modelUrl: V1_API + 'models/chat'
+}
+
+export const chatUrl = {
+    // 消息相关接口
+    chatUrl: V1_API + 'chat',
+    chatMessageUrl: V1_API + 'chat/:id',
+    
+    // 会话相关接口
+    chatSessionUrl: V1_API + 'chat-session',
+    chatSessionUserUrl: V1_API + 'chat-session/user/:userId',
+    chatSessionDetailUrl: V1_API + 'chat-session/:sessionId',
+    chatSessionMessagesUrl: V1_API + 'chat-session/:sessionId/messages'
+}
+
 export default {
     fileUrl,
-    projectUrl
+    projectUrl,
+    modelsUrl,
+    chatUrl
 }

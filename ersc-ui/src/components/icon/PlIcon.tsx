@@ -4,7 +4,7 @@ import { Tooltip } from 'antd';
 
 export default function PlIcon({type, title, style, className, onClick}: {type: string, title?: string, style?: React.CSSProperties, className?: string, onClick?: () => void}) {
     const IconFont = createFromIconfontCN({
-        scriptUrl: '//at.alicdn.com/t/c/font_4511939_dfbxssbjw7o.js',
+        scriptUrl: '//at.alicdn.com/t/c/font_4511939_hcmhkbwm7h8.js',
     });
     return (
         <Tooltip placement="topLeft" title={title} arrow={false}>
