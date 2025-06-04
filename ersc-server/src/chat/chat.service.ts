@@ -3,48 +3,51 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Chat } from './entities/chat.entity';
 import { CreateChatDto, MessageRole } from './dto/create-chat.dto';
+import { DeepSeekProvider } from './providers/deepseek.provider';
 
 @Injectable()
 export class ChatService {
   constructor(
     @InjectRepository(Chat)
     private chatRepository: Repository<Chat>,
+    private readonly deepSeekProvider: DeepSeekProvider
   ) {}
 
   // 发送用户消息并生成AI响应
   async sendMessage(createChatDto: CreateChatDto): Promise<{
-    userMessage: Chat;
-    aiResponse: Chat;
+    message: string;
   }> {
     // 创建用户消息
-    const userMessage = await this.create({
+    await this.create({
       ...createChatDto,
       role: MessageRole.USER,
     });
 
     try {
       // 生成AI响应内容
-      const aiResponseContent = await this.generateAIResponse(
-        createChatDto.content,
-        createChatDto.chatSessionId,
-        createChatDto.modelName
-      );
-
+      const aiResponseContent = await this.deepSeekProvider.chat([
+        {
+          role: MessageRole.USER,
+          content: createChatDto.content,
+        },
+      ]);
       // 创建AI响应消息
-      const aiResponse = await this.create({
+      await this.create({
         chatSessionId: createChatDto.chatSessionId,
         role: MessageRole.ASSISTANT,
-        content: aiResponseContent,
+        content: aiResponseContent.choices[0].message.content,
         userId: createChatDto.userId,
-        modelName: createChatDto.modelName,
+        modelName: createChatDto.modelName || 'DeepSeek-Chat',
         modelConfig: createChatDto.modelConfig,
         metadata: {
-          modelName: createChatDto.modelName || 'default',
+          modelName: createChatDto.modelName || 'DeepSeek-Chat',
           timestamp: Date.now(),
         },
       });
 
-      return { userMessage, aiResponse };
+      return {
+        message: aiResponseContent.choices[0].message.content,
+      };
     } catch (error) {
       console.error('AI响应生成失败:', error);
       throw error;

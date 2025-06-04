@@ -54,7 +54,7 @@ export default function AIChat() {
 
     function initChatInfo(id: number) {
         getChatSession(id).then((res: any) => {
-            // setMessages(res.chats);
+            setMessages(res.chats);
             setTitle(res.title);
             setChatSessionId(res.id);
         });
@@ -150,7 +150,7 @@ export default function AIChat() {
                     <AIMessageItem key={index} message={message} />
                 }) }
             </div>
-            <AIChatInput onSubmit={handleSubmit} />
+            <AIChatInput onSubmit={handleSubmit} sessionId={chatSessionId} />
         </div>
     )
 }

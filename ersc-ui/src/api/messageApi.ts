@@ -6,14 +6,14 @@ export interface ChatMessage {
     id?: string;
     content: string;
     role: 'user' | 'assistant';
-    sessionId: string;
+    sessionId: number;
     timestamp?: string;
 }
 
 export interface SendChatMessageRequest {
     content: string;
-    sessionId: string;
-    role?: 'user' | 'assistant';
+    chatSessionId: number;
+    userId: number;
 }
 
 // =============================================================================

@@ -4,7 +4,7 @@ import { useState } from "react";
 import type { MenuProps } from 'antd';
 import './css/AIChatInput.scss';
 import PlIcon from "../icon/PlIcon";
-import { chatMessage } from "@/api/modelApi";
+import { sendChatMessage } from "@/api/messageApi";
 
 interface MentionItem {
     path: string;
@@ -13,10 +13,11 @@ interface MentionItem {
     type?: string;
 }
 
-export default function AIChatInput({ onSubmit }: { onSubmit: (message: ModelMessage) => void }) {
+export default function AIChatInput({ onSubmit, sessionId }: { onSubmit: (message: ModelMessage) => void, sessionId: number }) {
     const [inputValue, setInputValue] = useState('');
     const [selectedModel, setSelectedModel] = useState('DeepSeek-Chat');
     const [mentions, setMentions] = useState<MentionItem[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     // 模型选项
     const modelList: MenuProps['items'] = [
@@ -44,28 +45,31 @@ export default function AIChatInput({ onSubmit }: { onSubmit: (message: ModelMes
     };
 
     const handleSubmit = async () => {
-        console.log('提交');
         onSubmit({
-            role: 'assistant',
+            role: 'user',
             content: inputValue
         });
-        const messages = [
-            {
-                role: 'system',
-                content: '你是一个代码阅读器，请根据用户的问题，阅读代码，并给出回答。'
-            },
-            {
-                role: 'user',
-                content: inputValue
-            }
-        ];
-        const res = await chatMessage(messages, selectedModel);
-
-        console.log(res);
+        setIsLoading(true);
+        setInputValue('');
+        sendChatMessage({
+            content: inputValue,
+            chatSessionId: sessionId,
+            userId: 1
+        }).then((res: any) => {
+            onSubmit({
+                role: 'assistant',
+                content: res.message
+            });
+        }).finally(() => {
+            setIsLoading(false);
+        });
     };
 
     return (
         <div className="ai-chat-input">
+            <div className="ai-chat-input-thinking" style={{ display: isLoading ? 'block' : 'none' }}>
+                思考中<span className="loading-dots"></span>
+            </div>
             <div className="ai-chat-mention">
                 {mentions.map((mention, index) => (
                     <Tag 
@@ -101,10 +105,11 @@ export default function AIChatInput({ onSubmit }: { onSubmit: (message: ModelMes
                 </div>
                 <div>
                     <Button
+                        loading={isLoading}
                         type="primary"
                         shape="circle" 
                         icon={<ArrowUpOutlined />} 
-                        disabled={!inputValue} 
+                        disabled={!inputValue || isLoading} 
                         onClick={handleSubmit} 
                         className="ai-chat-input-submit"
                     />

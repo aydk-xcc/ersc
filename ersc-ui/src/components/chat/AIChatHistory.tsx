@@ -88,7 +88,10 @@ export default function AIChatHistory({ isOpen, onClose, onSelectChatSession, on
                             className="ai-chat-history-item-delete-btn"
                             type="text"
                             icon={<DeleteOutlined />}
-                            onClick={() => handleDeleteChatSession(session)}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteChatSession(session);
+                            }}
                         />
                     </div>
                 ))}

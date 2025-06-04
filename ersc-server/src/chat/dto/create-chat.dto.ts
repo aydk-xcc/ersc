@@ -10,8 +10,9 @@ export class CreateChatDto {
   @IsNumber()
   chatSessionId: number;
 
+  @IsOptional()
   @IsEnum(MessageRole)
-  role: MessageRole;
+  role?: MessageRole;
 
   @IsString()
   content: string;

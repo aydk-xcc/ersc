@@ -30,5 +30,95 @@
 
     .ai-message-content {
         padding: 10px;
+        width: 100%;
+        
+        .markdown-body {
+            background: transparent !important;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #333;
+            
+            // 代码块样式优化
+            pre {
+                background-color: #f6f8fa;
+                border-radius: 6px;
+                padding: 16px;
+                overflow-x: auto;
+                border: 1px solid #e1e4e8;
+            }
+            
+            // 行内代码样式
+            code {
+                background-color: rgba(175, 184, 193, 0.2);
+                padding: 0.2em 0.4em;
+                border-radius: 3px;
+                font-size: 0.875em;
+            }
+            
+            // 引用块样式
+            blockquote {
+                border-left: 4px solid #d1d9e0;
+                padding-left: 16px;
+                color: #656d76;
+                background-color: #f6f8fa;
+                margin: 16px 0;
+                padding: 8px 16px;
+                border-radius: 0 6px 6px 0;
+            }
+            
+            // 表格样式
+            table {
+                border-collapse: collapse;
+                margin: 16px 0;
+                
+                th, td {
+                    border: 1px solid #d1d9e0;
+                    padding: 8px 12px;
+                }
+                
+                th {
+                    background-color: #f6f8fa;
+                    font-weight: 600;
+                }
+            }
+            
+            // 标题间距优化
+            h1, h2, h3, h4, h5, h6 {
+                margin-top: 24px;
+                margin-bottom: 16px;
+                font-weight: 600;
+                line-height: 1.25;
+            }
+            
+            h1 { font-size: 1.5em; }
+            h2 { font-size: 1.3em; }
+            h3 { font-size: 1.1em; }
+            
+            // 段落间距
+            p {
+                margin-bottom: 16px;
+                line-height: 1.6;
+            }
+            
+            // 列表样式
+            ul, ol {
+                margin: 16px 0;
+                padding-left: 20px;
+            }
+            
+            li {
+                margin: 4px 0;
+            }
+            
+            // 链接样式
+            a {
+                color: #0969da;
+                text-decoration: none;
+                
+                &:hover {
+                    text-decoration: underline;
+                }
+            }
+        }
     }
 }

@@ -18,13 +18,13 @@ export class Chat {
   @Column()
   userId: number;
 
-  @Column({ type: 'varchar', length: 100, nullable: true })
+  @Column({ type: 'varchar', length: 100, nullable: true, default: null })
   modelName: string; // 使用的大模型名称（仅AI消息有）
 
-  @Column({ type: 'json', nullable: true })
+  @Column({ type: 'json', nullable: true, default: null })
   modelConfig: any; // 模型配置参数（仅AI消息有）
 
-  @Column({ type: 'json', nullable: true })
+  @Column({ type: 'json', nullable: true, default: null })
   metadata: any; // 额外的元数据
 
   @CreateDateColumn()

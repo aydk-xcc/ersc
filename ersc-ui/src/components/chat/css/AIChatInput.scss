@@ -1,8 +1,35 @@
 .ai-chat-input {
+    position: relative;
     padding: 8px;
     background: white;
     margin: 8px;
     border-radius: 6px;
+
+    .ai-chat-input-thinking {
+        color: #8a8a8a;
+        font-size: 14px;
+        padding: 4px;
+        position: absolute;
+        top: -30px;
+        left: 0;
+        width: 100%;
+        padding: 0 8px;
+        height: 30px;
+        line-height: 30px;
+        background: white;
+        line-height: 30px;
+        border-radius: 6px;
+
+        .loading-dots {
+            &::after {
+                content: '';
+                animation: loading-dots 1.5s infinite;
+                display: inline-block;
+                width: 2em;
+                text-align: left;
+            }
+        }
+    }
 
     .ai-chat-input-textarea {
         border: none;
@@ -47,4 +74,12 @@
             }
         }
     }
+}
+
+@keyframes loading-dots {
+    0% { content: ''; }
+    25% { content: '.'; }
+    50% { content: '..'; }
+    75% { content: '...'; }
+    100% { content: ''; }
 }

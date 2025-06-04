@@ -1,19 +1,16 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('chats')
-export class Chat {
+@Entity('models')
+export class Model {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column({ type: 'varchar', length: 255 })
-  model: string;
+  name: string;
 
   @Column({ type: 'text' })
-  messages: string;
-
-  @Column()
-  sessionId: string;
-
+  description: string;
+  
   @Column()
   userId: number;
 
