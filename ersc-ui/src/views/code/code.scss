@@ -3,11 +3,12 @@
     width: 100%;
     display: flex;
     flex-direction: row;
+    position: relative;
 
     .code-left {
         height: 100%;
-        width: 310px;
-        max-width: 310px;
+        width: 100%;
+        min-width: 310px;
         flex-shrink: 0;
         display: flex;
         background-color: white;
@@ -38,8 +39,36 @@
 
     }
 
+    .resize-divider {
+        width: 2px;
+        background: transparent;
+        cursor: col-resize;
+        position: relative;
+        flex-shrink: 0;
+        z-index: 10;
+        
+        &:hover {
+            background: #1890ff;
+        }
+        
+        &:active {
+            background: #1890ff;
+        }
+        
+        &::before {
+            content: '';
+            position: absolute;
+            left: -2px;
+            top: 0;
+            width: 8px;
+            height: 100%;
+            background: transparent;
+        }
+    }
+
     .code-right {
-        width: calc(100% - 200px);
+        flex: 1;
+        min-width: 300px;
         overflow: hidden;
 
         .ant-tabs {

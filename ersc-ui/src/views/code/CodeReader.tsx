@@ -9,6 +9,7 @@ import { Tabs } from 'antd';
 import { DEFAULT_MD_CONTENT } from './defaultContent';
 import AIChat from '@/components/chat/AIChat';
 import { selectChatVisible } from '@/stores/chatSlice';
+import ResizeDivider from '@/components/resizer/ResizeDivider';
 
 
 interface FileInfo {
@@ -29,14 +30,12 @@ export default function CodeReader() {
         }
     ]);
 
-    // 添加调试信息
     useEffect(() => {
         console.log('Files state updated:', files);
         console.log('Current tab:', currentTab);
     }, [files, currentTab]);
 
     useEffect(() => {
-        // 当项目切换时，重置为默认状态
         console.log('Project changed, resetting files');
         setFiles([{
             name: 'ESRC-说明',
@@ -71,7 +70,6 @@ export default function CodeReader() {
     function removeTab(targetKey: string | React.MouseEvent | React.KeyboardEvent, action: 'add' | 'remove') {
         if (action === 'remove' && typeof targetKey === 'string') {
             setFiles(prevFiles => prevFiles.filter(file => file.path !== targetKey));
-            // 如果关闭的是当前标签，切换到第一个标签
             if (targetKey === currentTab) {
                 const remainingFiles = files.filter(file => file.path !== targetKey);
                 if (remainingFiles.length > 0) {
@@ -84,9 +82,15 @@ export default function CodeReader() {
     return (
         <>
             <div className="code-container">
-                <CodeSlider 
-                    onFileChange={onFileChange}
-                />
+                <ResizeDivider 
+                    direction="right"
+                    minWidth={310}
+                    maxWidth={500}
+                >
+                    <CodeSlider 
+                        onFileChange={onFileChange}
+                    />
+                </ResizeDivider>
                 <div className="code-right">
                     <Tabs
                         type='editable-card'
@@ -97,12 +101,12 @@ export default function CodeReader() {
                         activeKey={currentTab}
                         onChange={setCurrentTab}
                         onEdit={removeTab}
-                        items={files.map((file, index) => {
+                        items={files.map((file) => {
                             console.log('Rendering tab for file:', file);
                             return {
                                 label: file.name,
                                 key: file.path,
-                                closable: file.path !== 'ESRC-说明', // 只有默认说明页不可关闭
+                                closable: file.path !== 'ESRC-说明',
                                 children: <Editor
                                     codeInfo={file.content}
                                     filePath={file.path}
@@ -111,7 +115,17 @@ export default function CodeReader() {
                         })}
                     />
                 </div>
-                {chatVisible && <AIChat />}
+                {chatVisible && 
+                <>
+                    <ResizeDivider 
+                        direction="left"
+                        initialWidth={310}
+                        minWidth={310}
+                        maxWidth={500}
+                    >
+                        <AIChat />
+                    </ResizeDivider>
+                </>}
             </div>
         </>
     )
